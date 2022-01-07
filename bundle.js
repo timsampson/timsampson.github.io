@@ -157,9 +157,18 @@ var app = (function () {
         }
         select.selectedIndex = -1; // no option should be selected
     }
+    function select_options(select, value) {
+        for (let i = 0; i < select.options.length; i += 1) {
+            const option = select.options[i];
+            option.selected = ~value.indexOf(option.__value);
+        }
+    }
     function select_value(select) {
         const selected_option = select.querySelector(':checked') || select.options[0];
         return selected_option && selected_option.__value;
+    }
+    function select_multiple_value(select) {
+        return [].map.call(select.querySelectorAll(':checked'), option => option.__value);
     }
     function custom_event(type, detail, bubbles = false) {
         const e = document.createEvent('CustomEvent');
@@ -290,22 +299,40 @@ var app = (function () {
     function add_render_callback(fn) {
         render_callbacks.push(fn);
     }
-    let flushing = false;
+    // flush() calls callbacks in this order:
+    // 1. All beforeUpdate callbacks, in order: parents before children
+    // 2. All bind:this callbacks, in reverse order: children before parents.
+    // 3. All afterUpdate callbacks, in order: parents before children. EXCEPT
+    //    for afterUpdates called during the initial onMount, which are called in
+    //    reverse order: children before parents.
+    // Since callbacks might update component values, which could trigger another
+    // call to flush(), the following steps guard against this:
+    // 1. During beforeUpdate, any updated components will be added to the
+    //    dirty_components array and will cause a reentrant call to flush(). Because
+    //    the flush index is kept outside the function, the reentrant call will pick
+    //    up where the earlier call left off and go through all dirty components. The
+    //    current_component value is saved and restored so that the reentrant call will
+    //    not interfere with the "parent" flush() call.
+    // 2. bind:this callbacks cannot trigger new flush() calls.
+    // 3. During afterUpdate, any updated components will NOT have their afterUpdate
+    //    callback called a second time; the seen_callbacks set, outside the flush()
+    //    function, guarantees this behavior.
     const seen_callbacks = new Set();
+    let flushidx = 0; // Do *not* move this inside the flush() function
     function flush() {
-        if (flushing)
-            return;
-        flushing = true;
+        const saved_component = current_component;
         do {
             // first, call beforeUpdate functions
             // and update components
-            for (let i = 0; i < dirty_components.length; i += 1) {
-                const component = dirty_components[i];
+            while (flushidx < dirty_components.length) {
+                const component = dirty_components[flushidx];
+                flushidx++;
                 set_current_component(component);
                 update(component.$$);
             }
             set_current_component(null);
             dirty_components.length = 0;
+            flushidx = 0;
             while (binding_callbacks.length)
                 binding_callbacks.pop()();
             // then, once components are updated, call
@@ -325,8 +352,8 @@ var app = (function () {
             flush_callbacks.pop()();
         }
         update_scheduled = false;
-        flushing = false;
         seen_callbacks.clear();
+        set_current_component(saved_component);
     }
     function update($$) {
         if ($$.fragment !== null) {
@@ -538,6 +565,13 @@ var app = (function () {
     function get_spread_object(spread_props) {
         return typeof spread_props === 'object' && spread_props !== null ? spread_props : {};
     }
+    function each(items, fn) {
+        let str = '';
+        for (let i = 0; i < items.length; i += 1) {
+            str += fn(items[i], i);
+        }
+        return str;
+    }
     function create_component(block) {
         block && block.c();
     }
@@ -597,7 +631,7 @@ var app = (function () {
             on_disconnect: [],
             before_update: [],
             after_update: [],
-            context: new Map(parent_component ? parent_component.$$.context : options.context || []),
+            context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
             // everything else
             callbacks: blank_object(),
             dirty,
@@ -668,7 +702,7 @@ var app = (function () {
     }
 
     function dispatch_dev(type, detail) {
-        document.dispatchEvent(custom_event(type, Object.assign({ version: '3.42.4' }, detail), true));
+        document.dispatchEvent(custom_event(type, Object.assign({ version: '3.44.3' }, detail), true));
     }
     function append_dev(target, node) {
         dispatch_dev('SvelteDOMInsert', { target, node });
@@ -967,9 +1001,9 @@ var app = (function () {
     	};
     }
 
-    /* node_modules/svelte-spa-router/Router.svelte generated by Svelte v3.42.4 */
+    /* node_modules/svelte-spa-router/Router.svelte generated by Svelte v3.44.3 */
 
-    const { Error: Error_1, Object: Object_1, console: console_1$1 } = globals;
+    const { Error: Error_1, Object: Object_1, console: console_1 } = globals;
 
     // (251:0) {:else}
     function create_else_block$1(ctx) {
@@ -1753,7 +1787,7 @@ var app = (function () {
     	const writable_props = ['routes', 'prefix', 'restoreScrollState'];
 
     	Object_1.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$1.warn(`<Router> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<Router> was created with unknown prop '${key}'`);
     	});
 
     	function routeEvent_handler(event) {
@@ -1889,7 +1923,7 @@ var app = (function () {
     	}
     }
 
-    /* src/routes/Home.svelte generated by Svelte v3.42.4 */
+    /* src/routes/Home.svelte generated by Svelte v3.44.3 */
 
     const file$4 = "src/routes/Home.svelte";
 
@@ -13018,39 +13052,43 @@ var app = (function () {
         };
     }
 
-    /* src/routes/Merit.svelte generated by Svelte v3.42.4 */
-
-    const { console: console_1 } = globals;
+    /* src/routes/Merit.svelte generated by Svelte v3.44.3 */
     const file$3 = "src/routes/Merit.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[18] = list[i];
+    	child_ctx[25] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[21] = list[i];
+    	child_ctx[28] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[24] = list[i];
+    	child_ctx[31] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_3(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[27] = list[i];
+    	child_ctx[31] = list[i];
     	return child_ctx;
     }
 
-    // (94:8) {#each homerooms as homeroom}
-    function create_each_block_3(ctx) {
+    function get_each_context_4(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[36] = list[i];
+    	return child_ctx;
+    }
+
+    // (141:8) {#each homerooms as homeroom}
+    function create_each_block_4(ctx) {
     	let option;
-    	let t_value = /*homeroom*/ ctx[27] + "";
+    	let t_value = /*homeroom*/ ctx[36] + "";
     	let t;
     	let option_value_value;
 
@@ -13058,18 +13096,61 @@ var app = (function () {
     		c: function create() {
     			option = element("option");
     			t = text(t_value);
-    			option.__value = option_value_value = /*homeroom*/ ctx[27];
+    			option.__value = option_value_value = /*homeroom*/ ctx[36];
     			option.value = option.__value;
-    			add_location(option, file$3, 94, 10, 2802);
+    			add_location(option, file$3, 141, 10, 5093);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
     			append_dev(option, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*homerooms*/ 16 && t_value !== (t_value = /*homeroom*/ ctx[27] + "")) set_data_dev(t, t_value);
+    			if (dirty[0] & /*homerooms*/ 32 && t_value !== (t_value = /*homeroom*/ ctx[36] + "")) set_data_dev(t, t_value);
 
-    			if (dirty & /*homerooms*/ 16 && option_value_value !== (option_value_value = /*homeroom*/ ctx[27])) {
+    			if (dirty[0] & /*homerooms*/ 32 && option_value_value !== (option_value_value = /*homeroom*/ ctx[36])) {
+    				prop_dev(option, "__value", option_value_value);
+    				option.value = option.__value;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_4.name,
+    		type: "each",
+    		source: "(141:8) {#each homerooms as homeroom}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (165:8) {#each filteredStudents as student}
+    function create_each_block_3(ctx) {
+    	let option;
+    	let t_value = /*student*/ ctx[31].name + "";
+    	let t;
+    	let option_value_value;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t = text(t_value);
+    			option.__value = option_value_value = /*student*/ ctx[31];
+    			option.value = option.__value;
+    			add_location(option, file$3, 165, 10, 6189);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*filteredStudents*/ 16 && t_value !== (t_value = /*student*/ ctx[31].name + "")) set_data_dev(t, t_value);
+
+    			if (dirty[0] & /*filteredStudents*/ 16 && option_value_value !== (option_value_value = /*student*/ ctx[31])) {
     				prop_dev(option, "__value", option_value_value);
     				option.value = option.__value;
     			}
@@ -13083,21 +13164,193 @@ var app = (function () {
     		block,
     		id: create_each_block_3.name,
     		type: "each",
-    		source: "(94:8) {#each homerooms as homeroom}",
+    		source: "(165:8) {#each filteredStudents as student}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (102:10) {#each behaviorCategories as merit}
+    // (183:6) {:else}
+    function create_else_block_1(ctx) {
+    	let select;
+    	let mounted;
+    	let dispose;
+    	let each_value_2 = /*selectedStudents*/ ctx[8];
+    	validate_each_argument(each_value_2);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			select = element("select");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(select, "class", "mt-1 rounded-md h-64 w-full border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
+    			attr_dev(select, "name", "addedStudents");
+    			attr_dev(select, "id", "addedStudents");
+    			select.multiple = true;
+    			if (/*studentsToRemoveFromList*/ ctx[10] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[19].call(select));
+    			add_location(select, file$3, 183, 8, 7099);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, select, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select, null);
+    			}
+
+    			select_options(select, /*studentsToRemoveFromList*/ ctx[10]);
+
+    			if (!mounted) {
+    				dispose = listen_dev(select, "change", /*select_change_handler*/ ctx[19]);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*selectedStudents*/ 256) {
+    				each_value_2 = /*selectedStudents*/ ctx[8];
+    				validate_each_argument(each_value_2);
+    				let i;
+
+    				for (i = 0; i < each_value_2.length; i += 1) {
+    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_2(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_2.length;
+    			}
+
+    			if (dirty[0] & /*studentsToRemoveFromList, selectedStudents*/ 1280) {
+    				select_options(select, /*studentsToRemoveFromList*/ ctx[10]);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(select);
+    			destroy_each(each_blocks, detaching);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1.name,
+    		type: "else",
+    		source: "(183:6) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (181:6) {#if selectedStudents.length < 1}
+    function create_if_block_2(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Please select a student";
+    			attr_dev(p, "class", "text-red-500 text-xs italic");
+    			add_location(p, file$3, 181, 8, 7010);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(181:6) {#if selectedStudents.length < 1}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (191:10) {#each selectedStudents as student}
     function create_each_block_2(ctx) {
+    	let option;
+    	let t0_value = /*student*/ ctx[31].id + "";
+    	let t0;
+    	let t1;
+    	let t2_value = /*student*/ ctx[31].name + "";
+    	let t2;
+    	let option_value_value;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t0 = text(t0_value);
+    			t1 = text(": ");
+    			t2 = text(t2_value);
+    			option.__value = option_value_value = /*student*/ ctx[31];
+    			option.value = option.__value;
+    			add_location(option, file$3, 191, 12, 7454);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t0);
+    			append_dev(option, t1);
+    			append_dev(option, t2);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*selectedStudents*/ 256 && t0_value !== (t0_value = /*student*/ ctx[31].id + "")) set_data_dev(t0, t0_value);
+    			if (dirty[0] & /*selectedStudents*/ 256 && t2_value !== (t2_value = /*student*/ ctx[31].name + "")) set_data_dev(t2, t2_value);
+
+    			if (dirty[0] & /*selectedStudents*/ 256 && option_value_value !== (option_value_value = /*student*/ ctx[31])) {
+    				prop_dev(option, "__value", option_value_value);
+    				option.value = option.__value;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(191:10) {#each selectedStudents as student}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (201:8) {#each behaviorCategories as merit}
+    function create_each_block_1(ctx) {
     	let div;
     	let label;
     	let input;
     	let t0;
     	let span;
-    	let t1_value = /*merit*/ ctx[24] + "";
+    	let t1_value = /*merit*/ ctx[28] + "";
     	let t1;
     	let t2;
     	let mounted;
@@ -13113,15 +13366,15 @@ var app = (function () {
     			t1 = text(t1_value);
     			t2 = space();
     			attr_dev(input, "type", "radio");
-    			input.__value = /*merit*/ ctx[24];
+    			input.__value = /*merit*/ ctx[28];
     			input.value = input.__value;
-    			/*$$binding_groups*/ ctx[14][1].push(input);
-    			add_location(input, file$3, 104, 16, 3117);
+    			/*$$binding_groups*/ ctx[21][1].push(input);
+    			add_location(input, file$3, 203, 14, 7891);
     			attr_dev(span, "class", "ml-2");
-    			add_location(span, file$3, 111, 16, 3350);
-    			add_location(label, file$3, 103, 14, 3093);
+    			add_location(span, file$3, 210, 14, 8110);
+    			add_location(label, file$3, 202, 12, 7869);
     			attr_dev(div, "class", "mb-2");
-    			add_location(div, file$3, 102, 12, 3060);
+    			add_location(div, file$3, 201, 10, 7838);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -13135,22 +13388,22 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input, "change", /*input_change_handler*/ ctx[13]),
-    					listen_dev(input, "submit", /*handleSubmit*/ ctx[10], false, false, false),
-    					listen_dev(input, "change", /*displayCategories*/ ctx[8], false, false, false)
+    					listen_dev(input, "change", /*input_change_handler*/ ctx[20]),
+    					listen_dev(input, "submit", /*handleSubmit*/ ctx[15], false, false, false),
+    					listen_dev(input, "change", /*displayCategories*/ ctx[11], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*level*/ 8) {
+    			if (dirty[0] & /*level*/ 8) {
     				input.checked = input.__value === /*level*/ ctx[3];
     			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			/*$$binding_groups*/ ctx[14][1].splice(/*$$binding_groups*/ ctx[14][1].indexOf(input), 1);
+    			/*$$binding_groups*/ ctx[21][1].splice(/*$$binding_groups*/ ctx[21][1].indexOf(input), 1);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -13158,34 +13411,64 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_2.name,
+    		id: create_each_block_1.name,
     		type: "each",
-    		source: "(102:10) {#each behaviorCategories as merit}",
+    		source: "(201:8) {#each behaviorCategories as merit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (140:8) {:else}
-    function create_else_block(ctx) {
-    	let h1;
+    // (216:6) {#if !level}
+    function create_if_block_1(ctx) {
+    	let p;
 
     	const block = {
     		c: function create() {
-    			h1 = element("h1");
-    			h1.textContent = "Please select a category";
-    			attr_dev(h1, "class", "text-2xl text-blue-800");
-    			add_location(h1, file$3, 140, 10, 4365);
+    			p = element("p");
+    			p.textContent = "Select a category from the list.";
+    			attr_dev(p, "class", "text-red-500 text-xs italic");
+    			add_location(p, file$3, 216, 8, 8238);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, h1, anchor);
+    			insert_dev(target, p, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(216:6) {#if !level}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (243:8) {:else}
+    function create_else_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Please select a category";
+    			attr_dev(p, "class", "text-red-500 text-xs italic");
+    			add_location(p, file$3, 243, 10, 9278);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
     		},
     		p: noop,
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h1);
+    			if (detaching) detach_dev(p);
     		}
     	};
 
@@ -13193,23 +13476,23 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(140:8) {:else}",
+    		source: "(243:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (120:8) {#if categories.length > 0}
-    function create_if_block_2(ctx) {
+    // (223:8) {#if categories.length > 0}
+    function create_if_block(ctx) {
     	let ul;
     	let current;
-    	let each_value_1 = /*categories*/ ctx[5];
-    	validate_each_argument(each_value_1);
+    	let each_value = /*categories*/ ctx[6];
+    	validate_each_argument(each_value);
     	let each_blocks = [];
 
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
     	}
 
     	const out = i => transition_out(each_blocks[i], 1, 1, () => {
@@ -13225,7 +13508,7 @@ var app = (function () {
     			}
 
     			attr_dev(ul, "class", "p-2 mx-auto");
-    			add_location(ul, file$3, 120, 10, 3611);
+    			add_location(ul, file$3, 223, 10, 8525);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -13237,19 +13520,19 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*quintOut, categories, behaviorList*/ 96) {
-    				each_value_1 = /*categories*/ ctx[5];
-    				validate_each_argument(each_value_1);
+    			if (dirty[0] & /*categories, behaviorList*/ 192) {
+    				each_value = /*categories*/ ctx[6];
+    				validate_each_argument(each_value);
     				let i;
 
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     						transition_in(each_blocks[i], 1);
     					} else {
-    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i] = create_each_block(child_ctx);
     						each_blocks[i].c();
     						transition_in(each_blocks[i], 1);
     						each_blocks[i].m(ul, null);
@@ -13258,7 +13541,7 @@ var app = (function () {
 
     				group_outros();
 
-    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
     					out(i);
     				}
 
@@ -13268,7 +13551,7 @@ var app = (function () {
     		i: function intro(local) {
     			if (current) return;
 
-    			for (let i = 0; i < each_value_1.length; i += 1) {
+    			for (let i = 0; i < each_value.length; i += 1) {
     				transition_in(each_blocks[i]);
     			}
 
@@ -13291,23 +13574,23 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2.name,
+    		id: create_if_block.name,
     		type: "if",
-    		source: "(120:8) {#if categories.length > 0}",
+    		source: "(223:8) {#if categories.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (122:12) {#each categories as category}
-    function create_each_block_1(ctx) {
+    // (225:12) {#each categories as category}
+    function create_each_block(ctx) {
     	let li;
     	let label;
     	let input;
     	let input_value_value;
     	let t0;
-    	let t1_value = /*category*/ ctx[21] + "";
+    	let t1_value = /*category*/ ctx[25] + "";
     	let t1;
     	let label_for_value;
     	let t2;
@@ -13327,46 +13610,46 @@ var app = (function () {
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "class", "text-blue-500 border-2 rounded border-blue-500 focus:ring-blue-500");
     			attr_dev(input, "name", "behaviorList");
-    			input.__value = input_value_value = /*category*/ ctx[21];
+    			input.__value = input_value_value = /*category*/ ctx[25];
     			input.value = input.__value;
-    			/*$$binding_groups*/ ctx[14][0].push(input);
-    			add_location(input, file$3, 127, 18, 3946);
-    			attr_dev(label, "for", label_for_value = /*category*/ ctx[21]);
+    			/*$$binding_groups*/ ctx[21][0].push(input);
+    			add_location(input, file$3, 230, 18, 8860);
+    			attr_dev(label, "for", label_for_value = /*category*/ ctx[25]);
     			attr_dev(label, "class", "ml-2 py-1 text-sm");
-    			add_location(label, file$3, 126, 16, 3879);
+    			add_location(label, file$3, 229, 16, 8793);
     			attr_dev(li, "class", "border-b-2 border-blue-200 pt-2 pb-1");
-    			add_location(li, file$3, 122, 14, 3693);
+    			add_location(li, file$3, 225, 14, 8607);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
     			append_dev(li, label);
     			append_dev(label, input);
-    			input.checked = ~/*behaviorList*/ ctx[6].indexOf(input.__value);
+    			input.checked = ~/*behaviorList*/ ctx[7].indexOf(input.__value);
     			append_dev(label, t0);
     			append_dev(label, t1);
     			append_dev(li, t2);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "change", /*input_change_handler_1*/ ctx[15]);
+    				dispose = listen_dev(input, "change", /*input_change_handler_1*/ ctx[22]);
     				mounted = true;
     			}
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
 
-    			if (!current || dirty & /*categories*/ 32 && input_value_value !== (input_value_value = /*category*/ ctx[21])) {
+    			if (!current || dirty[0] & /*categories*/ 64 && input_value_value !== (input_value_value = /*category*/ ctx[25])) {
     				prop_dev(input, "__value", input_value_value);
     				input.value = input.__value;
     			}
 
-    			if (dirty & /*behaviorList*/ 64) {
-    				input.checked = ~/*behaviorList*/ ctx[6].indexOf(input.__value);
+    			if (dirty[0] & /*behaviorList*/ 128) {
+    				input.checked = ~/*behaviorList*/ ctx[7].indexOf(input.__value);
     			}
 
-    			if ((!current || dirty & /*categories*/ 32) && t1_value !== (t1_value = /*category*/ ctx[21] + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty[0] & /*categories*/ 64) && t1_value !== (t1_value = /*category*/ ctx[25] + "")) set_data_dev(t1, t1_value);
 
-    			if (!current || dirty & /*categories*/ 32 && label_for_value !== (label_for_value = /*category*/ ctx[21])) {
+    			if (!current || dirty[0] & /*categories*/ 64 && label_for_value !== (label_for_value = /*category*/ ctx[25])) {
     				attr_dev(label, "for", label_for_value);
     			}
     		},
@@ -13412,7 +13695,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(li);
-    			/*$$binding_groups*/ ctx[14][0].splice(/*$$binding_groups*/ ctx[14][0].indexOf(input), 1);
+    			/*$$binding_groups*/ ctx[21][0].splice(/*$$binding_groups*/ ctx[21][0].indexOf(input), 1);
     			if (detaching && li_transition) li_transition.end();
     			mounted = false;
     			dispose();
@@ -13421,151 +13704,9 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(122:12) {#each categories as category}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (157:40) 
-    function create_if_block_1(ctx) {
-    	let each_1_anchor;
-    	let each_value = /*filteredStudents*/ ctx[7];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			each_1_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
-
-    			insert_dev(target, each_1_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*filteredStudents*/ 128) {
-    				each_value = /*filteredStudents*/ ctx[7];
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1.name,
-    		type: "if",
-    		source: "(157:40) ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (155:2) {#if searchTerm && studentData.length === 0}
-    function create_if_block(ctx) {
-    	let h1;
-
-    	const block = {
-    		c: function create() {
-    			h1 = element("h1");
-    			h1.textContent = "no results";
-    			add_location(h1, file$3, 155, 4, 4718);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, h1, anchor);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block.name,
-    		type: "if",
-    		source: "(155:2) {#if searchTerm && studentData.length === 0}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (158:4) {#each filteredStudents as student}
-    function create_each_block(ctx) {
-    	let p;
-    	let t0_value = /*student*/ ctx[18].name + "";
-    	let t0;
-    	let t1;
-    	let t2_value = /*student*/ ctx[18].homeroom + "";
-    	let t2;
-
-    	const block = {
-    		c: function create() {
-    			p = element("p");
-    			t0 = text(t0_value);
-    			t1 = text(" in ");
-    			t2 = text(t2_value);
-    			attr_dev(p, "class", "mt-1 text-blue-800");
-    			add_location(p, file$3, 158, 6, 4825);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, p, anchor);
-    			append_dev(p, t0);
-    			append_dev(p, t1);
-    			append_dev(p, t2);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*filteredStudents*/ 128 && t0_value !== (t0_value = /*student*/ ctx[18].name + "")) set_data_dev(t0, t0_value);
-    			if (dirty & /*filteredStudents*/ 128 && t2_value !== (t2_value = /*student*/ ctx[18].homeroom + "")) set_data_dev(t2, t2_value);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(p);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(158:4) {#each filteredStudents as student}",
+    		source: "(225:12) {#each categories as category}",
     		ctx
     	});
 
@@ -13573,35 +13714,71 @@ var app = (function () {
     }
 
     function create_fragment$3(ctx) {
-    	let h2;
+    	let h1;
     	let t1;
-    	let div5;
-    	let form;
+    	let div13;
+    	let div12;
     	let div0;
+    	let h20;
+    	let t3;
     	let input;
-    	let t2;
-    	let select;
+    	let t4;
+    	let div1;
+    	let h21;
+    	let t6;
+    	let select0;
     	let option0;
     	let option1;
-    	let t5;
-    	let div4;
-    	let div2;
-    	let div1;
-    	let t6;
-    	let p;
-    	let t8;
-    	let div3;
-    	let current_block_type_index;
-    	let if_block0;
     	let t9;
-    	let button;
-    	let t10;
+    	let div3;
+    	let div2;
+    	let h22;
     	let t11;
+    	let button0;
+    	let t13;
+    	let select1;
+    	let t14;
+    	let div5;
+    	let div4;
+    	let h23;
+    	let t16;
+    	let button1;
+    	let t18;
+    	let t19;
+    	let div7;
+    	let h24;
+    	let t21;
     	let div6;
+    	let t22;
+    	let t23;
+    	let div9;
+    	let h25;
+    	let t25;
+    	let div8;
+    	let current_block_type_index;
+    	let if_block2;
+    	let t26;
+    	let div10;
+    	let label;
+    	let span;
+    	let t28;
+    	let textarea;
+    	let t29;
+    	let div11;
+    	let button2;
+    	let t30;
     	let current;
     	let mounted;
     	let dispose;
-    	let each_value_3 = /*homerooms*/ ctx[4];
+    	let each_value_4 = /*homerooms*/ ctx[5];
+    	validate_each_argument(each_value_4);
+    	let each_blocks_2 = [];
+
+    	for (let i = 0; i < each_value_4.length; i += 1) {
+    		each_blocks_2[i] = create_each_block_4(get_each_context_4(ctx, each_value_4, i));
+    	}
+
+    	let each_value_3 = /*filteredStudents*/ ctx[4];
     	validate_each_argument(each_value_3);
     	let each_blocks_1 = [];
 
@@ -13609,175 +13786,326 @@ var app = (function () {
     		each_blocks_1[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
     	}
 
-    	let each_value_2 = behaviorCategories;
-    	validate_each_argument(each_value_2);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value_2.length; i += 1) {
-    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	function select_block_type(ctx, dirty) {
+    		if (/*selectedStudents*/ ctx[8].length < 1) return create_if_block_2;
+    		return create_else_block_1;
     	}
 
-    	const if_block_creators = [create_if_block_2, create_else_block];
+    	let current_block_type = select_block_type(ctx);
+    	let if_block0 = current_block_type(ctx);
+    	let each_value_1 = behaviorCategories;
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	let if_block1 = !/*level*/ ctx[3] && create_if_block_1(ctx);
+    	const if_block_creators = [create_if_block, create_else_block];
     	const if_blocks = [];
 
-    	function select_block_type(ctx, dirty) {
-    		if (/*categories*/ ctx[5].length > 0) return 0;
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*categories*/ ctx[6].length > 0) return 0;
     		return 1;
     	}
 
-    	current_block_type_index = select_block_type(ctx);
-    	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-
-    	function select_block_type_1(ctx, dirty) {
-    		if (/*searchTerm*/ ctx[0] && studentData.length === 0) return create_if_block;
-    		if (/*filteredStudents*/ ctx[7].length > 0) return create_if_block_1;
-    	}
-
-    	let current_block_type = select_block_type_1(ctx);
-    	let if_block1 = current_block_type && current_block_type(ctx);
+    	current_block_type_index = select_block_type_1(ctx);
+    	if_block2 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	const block = {
     		c: function create() {
-    			h2 = element("h2");
-    			h2.textContent = "Merit component";
+    			h1 = element("h1");
+    			h1.textContent = "Student Merit Form";
     			t1 = space();
-    			div5 = element("div");
-    			form = element("form");
+    			div13 = element("div");
+    			div12 = element("div");
     			div0 = element("div");
+    			h20 = element("h2");
+    			h20.textContent = "Search by Student";
+    			t3 = space();
     			input = element("input");
-    			t2 = space();
-    			select = element("select");
+    			t4 = space();
+    			div1 = element("div");
+    			h21 = element("h2");
+    			h21.textContent = "Search by Homeroom";
+    			t6 = space();
+    			select0 = element("select");
     			option0 = element("option");
     			option0.textContent = "Select a homeroom.";
     			option1 = element("option");
     			option1.textContent = "All homerooms";
 
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].c();
+    			}
+
+    			t9 = space();
+    			div3 = element("div");
+    			div2 = element("div");
+    			h22 = element("h2");
+    			h22.textContent = "Students";
+    			t11 = space();
+    			button0 = element("button");
+    			button0.textContent = "Add Student";
+    			t13 = space();
+    			select1 = element("select");
+
     			for (let i = 0; i < each_blocks_1.length; i += 1) {
     				each_blocks_1[i].c();
     			}
 
-    			t5 = space();
+    			t14 = space();
+    			div5 = element("div");
     			div4 = element("div");
-    			div2 = element("div");
-    			div1 = element("div");
+    			h23 = element("h2");
+    			h23.textContent = "Selected Students";
+    			t16 = space();
+    			button1 = element("button");
+    			button1.textContent = "Remove Student";
+    			t18 = space();
+    			if_block0.c();
+    			t19 = space();
+    			div7 = element("div");
+    			h24 = element("h2");
+    			h24.textContent = "Merit Categories";
+    			t21 = space();
+    			div6 = element("div");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			t6 = space();
-    			p = element("p");
-    			p.textContent = "Select a level from the list.";
-    			t8 = space();
-    			div3 = element("div");
-    			if_block0.c();
-    			t9 = space();
-    			button = element("button");
-    			t10 = text("Button");
-    			t11 = space();
-    			div6 = element("div");
+    			t22 = space();
     			if (if_block1) if_block1.c();
-    			add_location(h2, file$3, 71, 0, 1902);
-    			attr_dev(input, "class", "flex-1 mt-1 mr-6 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
+    			t23 = space();
+    			div9 = element("div");
+    			h25 = element("h2");
+    			h25.textContent = "Merit Information";
+    			t25 = space();
+    			div8 = element("div");
+    			if_block2.c();
+    			t26 = space();
+    			div10 = element("div");
+    			label = element("label");
+    			span = element("span");
+    			span.textContent = "Textarea";
+    			t28 = space();
+    			textarea = element("textarea");
+    			t29 = space();
+    			div11 = element("div");
+    			button2 = element("button");
+    			t30 = text("Submit");
+    			attr_dev(h1, "class", "text-2xl text-blue-800");
+    			add_location(h1, file$3, 112, 0, 3802);
+    			attr_dev(h20, "class", "text-xl text-blue-800");
+    			add_location(h20, file$3, 119, 6, 4094);
+    			attr_dev(input, "class", "flex-1 mt-1 w-full mr-6 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "search-field");
     			attr_dev(input, "placeholder", "Enter Student Name");
     			attr_dev(input, "autocomplete", "off");
-    			add_location(input, file$3, 76, 6, 2031);
+    			add_location(input, file$3, 120, 6, 4157);
+    			attr_dev(div0, "class", "p-4 border border-green-100 md:shadow-lg rounded-lg");
+    			add_location(div0, file$3, 118, 4, 4022);
+    			attr_dev(h21, "class", "text-xl text-blue-800");
+    			add_location(h21, file$3, 131, 6, 4597);
     			option0.disabled = true;
     			option0.selected = true;
     			option0.__value = "";
     			option0.value = option0.__value;
-    			add_location(option0, file$3, 91, 8, 2640);
-    			option1.__value = "all";
+    			add_location(option0, file$3, 138, 8, 4921);
+    			option1.__value = "All Homerooms";
     			option1.value = option1.__value;
-    			add_location(option1, file$3, 92, 8, 2711);
-    			attr_dev(select, "class", "flex-1 w-1/2 mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
-    			attr_dev(select, "name", "homeroom");
-    			attr_dev(select, "id", "homeroom");
-    			if (/*selectedHomeroom*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[12].call(select));
-    			add_location(select, file$3, 85, 6, 2382);
-    			attr_dev(div0, "class", "finline-flex space-x-4 mb-6");
-    			add_location(div0, file$3, 75, 4, 1983);
-    			add_location(div1, file$3, 100, 8, 2996);
-    			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 116, 8, 3467);
-    			attr_dev(div2, "class", "w-full md:w-1/2 px-3 mb-6 md:mb-0");
-    			add_location(div2, file$3, 99, 6, 2940);
-    			add_location(div3, file$3, 118, 6, 3559);
-    			attr_dev(div4, "class", "flex flex-wrap -mx-3 mb-6");
-    			add_location(div4, file$3, 98, 4, 2894);
-    			attr_dev(form, "class", "w-full max-w-lg");
-    			add_location(form, file$3, 74, 2, 1948);
-    			attr_dev(button, "submitted", /*submitted*/ ctx[2]);
-    			attr_dev(button, "class", "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded");
-    			add_location(button, file$3, 145, 2, 4480);
-    			attr_dev(div5, "class", "m-4");
-    			add_location(div5, file$3, 73, 0, 1928);
-    			attr_dev(div6, "class", "ml-8 ");
-    			add_location(div6, file$3, 153, 0, 4647);
+    			add_location(option1, file$3, 139, 8, 4992);
+    			attr_dev(select0, "class", "flex-1 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
+    			attr_dev(select0, "name", "homeroom");
+    			attr_dev(select0, "id", "homeroom");
+    			if (/*selectedHomeroom*/ ctx[1] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[17].call(select0));
+    			add_location(select0, file$3, 132, 6, 4662);
+    			attr_dev(div1, "class", "p-4 border border-green-100 md:shadow-lg rounded-lg");
+    			add_location(div1, file$3, 130, 4, 4525);
+    			attr_dev(h22, "class", "text-xl text-blue-800");
+    			add_location(h22, file$3, 149, 8, 5378);
+    			attr_dev(button0, "type", "button");
+    			attr_dev(button0, "class", "inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
+    			add_location(button0, file$3, 150, 8, 5435);
+    			attr_dev(div2, "class", "flex justify-between");
+    			add_location(div2, file$3, 148, 6, 5335);
+    			attr_dev(select1, "class", "mt-1 rounded-md h-64 w-full border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
+    			attr_dev(select1, "name", "students");
+    			attr_dev(select1, "id", "students");
+    			select1.multiple = true;
+    			if (/*studentsToAddToList*/ ctx[9] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[18].call(select1));
+    			add_location(select1, file$3, 157, 6, 5865);
+    			attr_dev(div3, "class", "p-4 border border-green-100 shadow-lg rounded-lg");
+    			add_location(div3, file$3, 147, 4, 5266);
+    			attr_dev(h23, "class", "text-xl text-blue-800");
+    			add_location(h23, file$3, 172, 8, 6464);
+    			attr_dev(button1, "type", "button");
+    			attr_dev(button1, "class", "inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
+    			add_location(button1, file$3, 173, 8, 6530);
+    			attr_dev(div4, "class", "flex justify-between");
+    			add_location(div4, file$3, 171, 6, 6421);
+    			attr_dev(div5, "class", "p-4 border border-green-100 shadow-lg rounded-lg");
+    			add_location(div5, file$3, 170, 4, 6351);
+    			attr_dev(h24, "class", "text-xl text-blue-800");
+    			add_location(h24, file$3, 198, 6, 7716);
+    			add_location(div6, file$3, 199, 6, 7778);
+    			attr_dev(div7, "class", "p-4 border border-green-100 md:shadow-lg rounded-lg");
+    			add_location(div7, file$3, 197, 4, 7644);
+    			attr_dev(h25, "class", "text-xl text-blue-800");
+    			add_location(h25, file$3, 220, 6, 8410);
+    			add_location(div8, file$3, 221, 6, 8473);
+    			attr_dev(div9, "class", "p-4 border border-green-100 shadow-lg rounded-lg");
+    			add_location(div9, file$3, 219, 4, 8341);
+    			attr_dev(span, "class", "text-gray-700");
+    			add_location(span, file$3, 249, 8, 9464);
+    			attr_dev(textarea, "class", "form-textarea mt-1 block w-96 h-24");
+    			attr_dev(textarea, "rows", "3");
+    			attr_dev(textarea, "placeholder", "Enter some long form content.");
+    			add_location(textarea, file$3, 250, 8, 9516);
+    			attr_dev(label, "class", "block");
+    			add_location(label, file$3, 248, 6, 9434);
+    			attr_dev(div10, "class", "grid place-content-center");
+    			add_location(div10, file$3, 247, 4, 9388);
+    			attr_dev(button2, "submitted", /*submitted*/ ctx[2]);
+    			attr_dev(button2, "class", "inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
+    			add_location(button2, file$3, 258, 6, 9740);
+    			attr_dev(div11, "class", "grid place-content-center");
+    			add_location(div11, file$3, 257, 4, 9694);
+    			attr_dev(div12, "class", "grid border-2 grid-cols-2 pb-2 gap-4 font-mono text-sm font-bold leading-6 rounded-lg");
+    			add_location(div12, file$3, 115, 2, 3910);
+    			attr_dev(div13, "class", "max-w-4xl");
+    			add_location(div13, file$3, 114, 0, 3884);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, h2, anchor);
+    			insert_dev(target, h1, anchor);
     			insert_dev(target, t1, anchor);
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, form);
-    			append_dev(form, div0);
+    			insert_dev(target, div13, anchor);
+    			append_dev(div13, div12);
+    			append_dev(div12, div0);
+    			append_dev(div0, h20);
+    			append_dev(div0, t3);
     			append_dev(div0, input);
     			set_input_value(input, /*searchTerm*/ ctx[0]);
-    			append_dev(div0, t2);
-    			append_dev(div0, select);
-    			append_dev(select, option0);
-    			append_dev(select, option1);
+    			append_dev(div12, t4);
+    			append_dev(div12, div1);
+    			append_dev(div1, h21);
+    			append_dev(div1, t6);
+    			append_dev(div1, select0);
+    			append_dev(select0, option0);
+    			append_dev(select0, option1);
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].m(select0, null);
+    			}
+
+    			select_option(select0, /*selectedHomeroom*/ ctx[1]);
+    			append_dev(div12, t9);
+    			append_dev(div12, div3);
+    			append_dev(div3, div2);
+    			append_dev(div2, h22);
+    			append_dev(div2, t11);
+    			append_dev(div2, button0);
+    			append_dev(div3, t13);
+    			append_dev(div3, select1);
 
     			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].m(select, null);
+    				each_blocks_1[i].m(select1, null);
     			}
 
-    			select_option(select, /*selectedHomeroom*/ ctx[1]);
-    			append_dev(form, t5);
-    			append_dev(form, div4);
-    			append_dev(div4, div2);
-    			append_dev(div2, div1);
+    			select_options(select1, /*studentsToAddToList*/ ctx[9]);
+    			append_dev(div12, t14);
+    			append_dev(div12, div5);
+    			append_dev(div5, div4);
+    			append_dev(div4, h23);
+    			append_dev(div4, t16);
+    			append_dev(div4, button1);
+    			append_dev(div5, t18);
+    			if_block0.m(div5, null);
+    			append_dev(div12, t19);
+    			append_dev(div12, div7);
+    			append_dev(div7, h24);
+    			append_dev(div7, t21);
+    			append_dev(div7, div6);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div1, null);
+    				each_blocks[i].m(div6, null);
     			}
 
-    			append_dev(div2, t6);
-    			append_dev(div2, p);
-    			append_dev(div4, t8);
-    			append_dev(div4, div3);
-    			if_blocks[current_block_type_index].m(div3, null);
-    			append_dev(div5, t9);
-    			append_dev(div5, button);
-    			append_dev(button, t10);
-    			insert_dev(target, t11, anchor);
-    			insert_dev(target, div6, anchor);
-    			if (if_block1) if_block1.m(div6, null);
+    			append_dev(div7, t22);
+    			if (if_block1) if_block1.m(div7, null);
+    			append_dev(div12, t23);
+    			append_dev(div12, div9);
+    			append_dev(div9, h25);
+    			append_dev(div9, t25);
+    			append_dev(div9, div8);
+    			if_blocks[current_block_type_index].m(div8, null);
+    			append_dev(div12, t26);
+    			append_dev(div12, div10);
+    			append_dev(div10, label);
+    			append_dev(label, span);
+    			append_dev(label, t28);
+    			append_dev(label, textarea);
+    			append_dev(div12, t29);
+    			append_dev(div12, div11);
+    			append_dev(div11, button2);
+    			append_dev(button2, t30);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[11]),
-    					listen_dev(input, "input", /*searchStudents*/ ctx[9], false, false, false),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[12]),
-    					listen_dev(button, "click", /*handleSubmit*/ ctx[10], false, false, false)
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[16]),
+    					listen_dev(input, "input", /*searchStudents*/ ctx[14], false, false, false),
+    					listen_dev(select0, "change", /*select0_change_handler*/ ctx[17]),
+    					listen_dev(button0, "click", /*addStudentToList*/ ctx[12], false, false, false),
+    					listen_dev(select1, "change", /*select1_change_handler*/ ctx[18]),
+    					listen_dev(button1, "click", /*removeStudentFromList*/ ctx[13], false, false, false),
+    					listen_dev(button2, "click", /*handleSubmit*/ ctx[15], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*searchTerm*/ 1 && input.value !== /*searchTerm*/ ctx[0]) {
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*searchTerm*/ 1 && input.value !== /*searchTerm*/ ctx[0]) {
     				set_input_value(input, /*searchTerm*/ ctx[0]);
     			}
 
-    			if (dirty & /*homerooms*/ 16) {
-    				each_value_3 = /*homerooms*/ ctx[4];
+    			if (dirty[0] & /*homerooms*/ 32) {
+    				each_value_4 = /*homerooms*/ ctx[5];
+    				validate_each_argument(each_value_4);
+    				let i;
+
+    				for (i = 0; i < each_value_4.length; i += 1) {
+    					const child_ctx = get_each_context_4(ctx, each_value_4, i);
+
+    					if (each_blocks_2[i]) {
+    						each_blocks_2[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks_2[i] = create_each_block_4(child_ctx);
+    						each_blocks_2[i].c();
+    						each_blocks_2[i].m(select0, null);
+    					}
+    				}
+
+    				for (; i < each_blocks_2.length; i += 1) {
+    					each_blocks_2[i].d(1);
+    				}
+
+    				each_blocks_2.length = each_value_4.length;
+    			}
+
+    			if (dirty[0] & /*selectedHomeroom, homerooms*/ 34) {
+    				select_option(select0, /*selectedHomeroom*/ ctx[1]);
+    			}
+
+    			if (dirty[0] & /*filteredStudents*/ 16) {
+    				each_value_3 = /*filteredStudents*/ ctx[4];
     				validate_each_argument(each_value_3);
     				let i;
 
@@ -13789,7 +14117,7 @@ var app = (function () {
     					} else {
     						each_blocks_1[i] = create_each_block_3(child_ctx);
     						each_blocks_1[i].c();
-    						each_blocks_1[i].m(select, null);
+    						each_blocks_1[i].m(select1, null);
     					}
     				}
 
@@ -13800,24 +14128,36 @@ var app = (function () {
     				each_blocks_1.length = each_value_3.length;
     			}
 
-    			if (dirty & /*selectedHomeroom, homerooms*/ 18) {
-    				select_option(select, /*selectedHomeroom*/ ctx[1]);
+    			if (dirty[0] & /*studentsToAddToList, filteredStudents*/ 528) {
+    				select_options(select1, /*studentsToAddToList*/ ctx[9]);
     			}
 
-    			if (dirty & /*behaviorCategories, level, handleSubmit, displayCategories*/ 1288) {
-    				each_value_2 = behaviorCategories;
-    				validate_each_argument(each_value_2);
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block0) {
+    				if_block0.p(ctx, dirty);
+    			} else {
+    				if_block0.d(1);
+    				if_block0 = current_block_type(ctx);
+
+    				if (if_block0) {
+    					if_block0.c();
+    					if_block0.m(div5, null);
+    				}
+    			}
+
+    			if (dirty[0] & /*level, handleSubmit, displayCategories*/ 34824) {
+    				each_value_1 = behaviorCategories;
+    				validate_each_argument(each_value_1);
     				let i;
 
-    				for (i = 0; i < each_value_2.length; i += 1) {
-    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks[i] = create_each_block_2(child_ctx);
+    						each_blocks[i] = create_each_block_1(child_ctx);
     						each_blocks[i].c();
-    						each_blocks[i].m(div1, null);
+    						each_blocks[i].m(div6, null);
     					}
     				}
 
@@ -13825,11 +14165,22 @@ var app = (function () {
     					each_blocks[i].d(1);
     				}
 
-    				each_blocks.length = each_value_2.length;
+    				each_blocks.length = each_value_1.length;
+    			}
+
+    			if (!/*level*/ ctx[3]) {
+    				if (if_block1) ; else {
+    					if_block1 = create_if_block_1(ctx);
+    					if_block1.c();
+    					if_block1.m(div7, null);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
     			}
 
     			let previous_block_index = current_block_type_index;
-    			current_block_type_index = select_block_type(ctx);
+    			current_block_type_index = select_block_type_1(ctx);
 
     			if (current_block_type_index === previous_block_index) {
     				if_blocks[current_block_type_index].p(ctx, dirty);
@@ -13841,58 +14192,42 @@ var app = (function () {
     				});
 
     				check_outros();
-    				if_block0 = if_blocks[current_block_type_index];
+    				if_block2 = if_blocks[current_block_type_index];
 
-    				if (!if_block0) {
-    					if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    					if_block0.c();
+    				if (!if_block2) {
+    					if_block2 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block2.c();
     				} else {
-    					if_block0.p(ctx, dirty);
+    					if_block2.p(ctx, dirty);
     				}
 
-    				transition_in(if_block0, 1);
-    				if_block0.m(div3, null);
+    				transition_in(if_block2, 1);
+    				if_block2.m(div8, null);
     			}
 
-    			if (!current || dirty & /*submitted*/ 4) {
-    				attr_dev(button, "submitted", /*submitted*/ ctx[2]);
-    			}
-
-    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block1) {
-    				if_block1.p(ctx, dirty);
-    			} else {
-    				if (if_block1) if_block1.d(1);
-    				if_block1 = current_block_type && current_block_type(ctx);
-
-    				if (if_block1) {
-    					if_block1.c();
-    					if_block1.m(div6, null);
-    				}
+    			if (!current || dirty[0] & /*submitted*/ 4) {
+    				attr_dev(button2, "submitted", /*submitted*/ ctx[2]);
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(if_block0);
+    			transition_in(if_block2);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(if_block0);
+    			transition_out(if_block2);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h2);
+    			if (detaching) detach_dev(h1);
     			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(div5);
+    			if (detaching) detach_dev(div13);
+    			destroy_each(each_blocks_2, detaching);
     			destroy_each(each_blocks_1, detaching);
+    			if_block0.d();
     			destroy_each(each_blocks, detaching);
+    			if (if_block1) if_block1.d();
     			if_blocks[current_block_type_index].d();
-    			if (detaching) detach_dev(t11);
-    			if (detaching) detach_dev(div6);
-
-    			if (if_block1) {
-    				if_block1.d();
-    			}
-
     			mounted = false;
     			run_all(dispose);
     		}
@@ -13909,71 +14244,127 @@ var app = (function () {
     	return block;
     }
 
+    function uncheckBehaviorList() {
+    	let checkboxes = document.getElementsByName("behaviorList");
+
+    	for (let i = 0, n = checkboxes.length; i < n; i++) {
+    		checkboxes[i].checked = false;
+    	}
+    }
+
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Merit', slots, []);
+    	onMount(() => getHomerooms());
     	let submitted = false;
     	let level = "";
     	let searchTerm = "";
+
+    	// will show up in the multiselect box to choose students to add to the form
+    	let filteredStudents = [];
+
+    	// selected in the dropdown box
     	let selectedHomeroom;
+
     	let homerooms = [];
+
+    	const getHomerooms = () => {
+    		// search throug all student data and filter out the homerooms that haven't been added to the list and add them.
+    		for (let studentObj of studentData) {
+    			if (!homerooms.includes(studentObj.homeroom)) {
+    				$$invalidate(5, homerooms = [...homerooms, studentObj.homeroom]);
+    			}
+    		}
+
+    		$$invalidate(5, homerooms = homerooms.sort());
+    	};
+
     	let categories = [];
     	let behaviorList = [];
 
     	function displayCategories() {
     		if (level === "Information") {
-    			$$invalidate(5, categories = informationList);
+    			$$invalidate(6, categories = informationList);
     		} else if (level === "Level 1") {
-    			$$invalidate(5, categories = level1List);
+    			$$invalidate(6, categories = level1List);
     		} else if (level === "Yellow Level") {
-    			$$invalidate(5, categories = YCList);
+    			$$invalidate(6, categories = YCList);
     		} else if (level === "Orange Level") {
-    			$$invalidate(5, categories = OCList);
+    			$$invalidate(6, categories = OCList);
     		} else if (level === "Red Level") {
-    			$$invalidate(5, categories = RCList);
-    		} else $$invalidate(5, categories = positiveList);
+    			$$invalidate(6, categories = RCList);
+    		} else $$invalidate(6, categories = positiveList);
+
+    		uncheckBehaviorList();
     	}
 
-    	let filteredStudents = [];
+    	let selectedStudents = [];
+    	let studentsToAddToList = [];
+    	let studentsToRemoveFromList = [];
 
-    	const getHomerooms = () => {
-    		for (let studentObj of studentData) {
-    			if (!homerooms.includes(studentObj.homeroom)) {
-    				$$invalidate(4, homerooms = [...homerooms, studentObj.homeroom]);
+    	function addStudentToList() {
+    		// selectedStudents = selectedStudents.concat(studentsToAddToList);
+    		// loop through all candidates on the add to list.
+    		for (let i = 0; i < studentsToAddToList.length; i++) {
+    			let found = false;
+
+    			// loop through all curretnly selected students
+    			if (selectedStudents.some(student => student.id === studentsToAddToList[i].id)) {
+    				/* selected Students contains the element we're looking for */
+    				found = true;
+    			}
+
+    			// if not found, add to the selected Student list
+    			if (!found) {
+    				selectedStudents.push(studentsToAddToList[i]);
     			}
     		}
 
-    		$$invalidate(4, homerooms = homerooms.sort());
-    	};
+    		selectedStudents.sort((a, b) => a.name > b.name ? 1 : -1);
+    		$$invalidate(8, selectedStudents);
+    	}
 
-    	onMount(() => getHomerooms());
+    	function removeStudentFromList() {
+    		for (let i = 0; i < studentsToRemoveFromList.length; i++) {
+    			for (let j = selectedStudents.length - 1; j >= 0; j--) {
+    				if (studentsToRemoveFromList[i].id == selectedStudents[j].id) {
+    					selectedStudents.splice(j, 1);
+    					$$invalidate(8, selectedStudents);
+    				}
+    			}
+    		}
+    	}
 
     	const getStudentsByHr = () => {
     		$$invalidate(0, searchTerm = "");
+    		$$invalidate(4, filteredStudents = "");
 
-    		if (selectedHomeroom === "all") {
-    			return $$invalidate(7, filteredStudents = []);
+    		if (selectedHomeroom === "All Homerooms") {
+    			$$invalidate(4, filteredStudents = studentData.filter(student => student.homeroom));
+    		} else {
+    			$$invalidate(4, filteredStudents = studentData.filter(student => student.homeroom === selectedHomeroom));
     		}
 
-    		return $$invalidate(7, filteredStudents = studentData.filter(student => student.homeroom === selectedHomeroom));
+    		return filteredStudents.sort((a, b) => a.name > b.name ? 1 : -1);
     	};
 
     	const searchStudents = () => {
-    		return $$invalidate(7, filteredStudents = studentData.filter(student => {
+    		$$invalidate(4, filteredStudents = studentData.filter(student => {
     			let studentName = student.name.toLowerCase();
     			return studentName.includes(searchTerm.toLowerCase());
     		}));
+
+    		return filteredStudents.sort((a, b) => a.name > b.name ? 1 : -1);
     	};
 
     	function handleSubmit() {
     		$$invalidate(2, submitted = true);
-    		console.log(`level:  ${level}.... behaviorList: ${behaviorList}`);
-    	}
+    	} // console.log(`level:  ${level}.... behaviorList: ${behaviorList}`);
 
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<Merit> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Merit> was created with unknown prop '${key}'`);
     	});
 
     	const $$binding_groups = [[], []];
@@ -13983,10 +14374,22 @@ var app = (function () {
     		$$invalidate(0, searchTerm);
     	}
 
-    	function select_change_handler() {
+    	function select0_change_handler() {
     		selectedHomeroom = select_value(this);
     		($$invalidate(1, selectedHomeroom), $$invalidate(0, searchTerm));
-    		$$invalidate(4, homerooms);
+    		$$invalidate(5, homerooms);
+    	}
+
+    	function select1_change_handler() {
+    		studentsToAddToList = select_multiple_value(this);
+    		$$invalidate(9, studentsToAddToList);
+    		$$invalidate(4, filteredStudents);
+    	}
+
+    	function select_change_handler() {
+    		studentsToRemoveFromList = select_multiple_value(this);
+    		$$invalidate(10, studentsToRemoveFromList);
+    		$$invalidate(8, selectedStudents);
     	}
 
     	function input_change_handler() {
@@ -13996,7 +14399,7 @@ var app = (function () {
 
     	function input_change_handler_1() {
     		behaviorList = get_binding_group_value($$binding_groups[0], this.__value, this.checked);
-    		$$invalidate(6, behaviorList);
+    		$$invalidate(7, behaviorList);
     	}
 
     	$$self.$capture_state = () => ({
@@ -14011,16 +14414,23 @@ var app = (function () {
     		onMount,
     		slide,
     		quintOut,
+    		each,
     		submitted,
     		level,
     		searchTerm,
+    		filteredStudents,
     		selectedHomeroom,
     		homerooms,
+    		getHomerooms,
     		categories,
     		behaviorList,
     		displayCategories,
-    		filteredStudents,
-    		getHomerooms,
+    		uncheckBehaviorList,
+    		selectedStudents,
+    		studentsToAddToList,
+    		studentsToRemoveFromList,
+    		addStudentToList,
+    		removeStudentFromList,
     		getStudentsByHr,
     		searchStudents,
     		handleSubmit
@@ -14030,11 +14440,14 @@ var app = (function () {
     		if ('submitted' in $$props) $$invalidate(2, submitted = $$props.submitted);
     		if ('level' in $$props) $$invalidate(3, level = $$props.level);
     		if ('searchTerm' in $$props) $$invalidate(0, searchTerm = $$props.searchTerm);
+    		if ('filteredStudents' in $$props) $$invalidate(4, filteredStudents = $$props.filteredStudents);
     		if ('selectedHomeroom' in $$props) $$invalidate(1, selectedHomeroom = $$props.selectedHomeroom);
-    		if ('homerooms' in $$props) $$invalidate(4, homerooms = $$props.homerooms);
-    		if ('categories' in $$props) $$invalidate(5, categories = $$props.categories);
-    		if ('behaviorList' in $$props) $$invalidate(6, behaviorList = $$props.behaviorList);
-    		if ('filteredStudents' in $$props) $$invalidate(7, filteredStudents = $$props.filteredStudents);
+    		if ('homerooms' in $$props) $$invalidate(5, homerooms = $$props.homerooms);
+    		if ('categories' in $$props) $$invalidate(6, categories = $$props.categories);
+    		if ('behaviorList' in $$props) $$invalidate(7, behaviorList = $$props.behaviorList);
+    		if ('selectedStudents' in $$props) $$invalidate(8, selectedStudents = $$props.selectedStudents);
+    		if ('studentsToAddToList' in $$props) $$invalidate(9, studentsToAddToList = $$props.studentsToAddToList);
+    		if ('studentsToRemoveFromList' in $$props) $$invalidate(10, studentsToRemoveFromList = $$props.studentsToRemoveFromList);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -14042,11 +14455,11 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*searchTerm*/ 1) {
+    		if ($$self.$$.dirty[0] & /*searchTerm*/ 1) {
     			if (searchTerm) $$invalidate(1, selectedHomeroom = "");
     		}
 
-    		if ($$self.$$.dirty & /*selectedHomeroom*/ 2) {
+    		if ($$self.$$.dirty[0] & /*selectedHomeroom*/ 2) {
     			if (selectedHomeroom) getStudentsByHr();
     		}
     	};
@@ -14056,14 +14469,21 @@ var app = (function () {
     		selectedHomeroom,
     		submitted,
     		level,
+    		filteredStudents,
     		homerooms,
     		categories,
     		behaviorList,
-    		filteredStudents,
+    		selectedStudents,
+    		studentsToAddToList,
+    		studentsToRemoveFromList,
     		displayCategories,
+    		addStudentToList,
+    		removeStudentFromList,
     		searchStudents,
     		handleSubmit,
     		input_input_handler,
+    		select0_change_handler,
+    		select1_change_handler,
     		select_change_handler,
     		input_change_handler,
     		$$binding_groups,
@@ -14074,7 +14494,7 @@ var app = (function () {
     class Merit extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {});
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {}, null, [-1, -1]);
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -14085,7 +14505,7 @@ var app = (function () {
     	}
     }
 
-    /* src/components/Navbar.svelte generated by Svelte v3.42.4 */
+    /* src/components/Navbar.svelte generated by Svelte v3.44.3 */
 
     const file$2 = "src/components/Navbar.svelte";
 
@@ -14200,7 +14620,7 @@ var app = (function () {
     	}
     }
 
-    /* src/routes/Admin.svelte generated by Svelte v3.42.4 */
+    /* src/routes/Admin.svelte generated by Svelte v3.44.3 */
 
     const file$1 = "src/routes/Admin.svelte";
 
@@ -14274,7 +14694,7 @@ var app = (function () {
     	}
     }
 
-    /* src/App.svelte generated by Svelte v3.42.4 */
+    /* src/App.svelte generated by Svelte v3.44.3 */
     const file = "src/App.svelte";
 
     function create_fragment(ctx) {
@@ -14384,5 +14804,5 @@ var app = (function () {
 
     return app;
 
-}());
+})();
 //# sourceMappingURL=bundle.js.map
