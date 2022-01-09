@@ -572,13 +572,6 @@ var app = (function () {
     function get_spread_object(spread_props) {
         return typeof spread_props === 'object' && spread_props !== null ? spread_props : {};
     }
-    function each(items, fn) {
-        let str = '';
-        for (let i = 0; i < items.length; i += 1) {
-            str += fn(items[i], i);
-        }
-        return str;
-    }
     function create_component(block) {
         block && block.c();
     }
@@ -13094,7 +13087,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (159:8) {#each homerooms as homeroom}
+    // (162:8) {#each homerooms as homeroom}
     function create_each_block_4(ctx) {
     	let option;
     	let t_value = /*homeroom*/ ctx[38] + "";
@@ -13107,7 +13100,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = option_value_value = /*homeroom*/ ctx[38];
     			option.value = option.__value;
-    			add_location(option, file$3, 159, 10, 5496);
+    			add_location(option, file$3, 162, 10, 5613);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13130,14 +13123,14 @@ var app = (function () {
     		block,
     		id: create_each_block_4.name,
     		type: "each",
-    		source: "(159:8) {#each homerooms as homeroom}",
+    		source: "(162:8) {#each homerooms as homeroom}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (184:8) {#each filteredStudents as student}
+    // (187:8) {#each filteredStudents as student}
     function create_each_block_3(ctx) {
     	let option;
     	let t_value = /*student*/ ctx[33].name + "";
@@ -13150,7 +13143,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = option_value_value = /*student*/ ctx[33];
     			option.value = option.__value;
-    			add_location(option, file$3, 184, 10, 6619);
+    			add_location(option, file$3, 187, 10, 6736);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13173,14 +13166,14 @@ var app = (function () {
     		block,
     		id: create_each_block_3.name,
     		type: "each",
-    		source: "(184:8) {#each filteredStudents as student}",
+    		source: "(187:8) {#each filteredStudents as student}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (202:6) {:else}
+    // (205:6) {:else}
     function create_else_block_1(ctx) {
     	let select;
     	let mounted;
@@ -13206,7 +13199,7 @@ var app = (function () {
     			attr_dev(select, "id", "addedStudents");
     			select.multiple = true;
     			if (/*studentsToRemoveFromList*/ ctx[10] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[19].call(select));
-    			add_location(select, file$3, 202, 8, 7525);
+    			add_location(select, file$3, 205, 8, 7642);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, select, anchor);
@@ -13263,14 +13256,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(202:6) {:else}",
+    		source: "(205:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (200:6) {#if selectedStudents.length < 1}
+    // (203:6) {#if selectedStudents.length < 1}
     function create_if_block_2(ctx) {
     	let p;
 
@@ -13279,7 +13272,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please select a student";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 200, 8, 7436);
+    			add_location(p, file$3, 203, 8, 7553);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13294,14 +13287,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(200:6) {#if selectedStudents.length < 1}",
+    		source: "(203:6) {#if selectedStudents.length < 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (210:10) {#each selectedStudents as student}
+    // (213:10) {#each selectedStudents as student}
     function create_each_block_2(ctx) {
     	let option;
     	let t0_value = /*student*/ ctx[33].id + "";
@@ -13319,7 +13312,7 @@ var app = (function () {
     			t2 = text(t2_value);
     			option.__value = option_value_value = /*student*/ ctx[33];
     			option.value = option.__value;
-    			add_location(option, file$3, 210, 12, 7875);
+    			add_location(option, file$3, 213, 12, 7992);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13345,14 +13338,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(210:10) {#each selectedStudents as student}",
+    		source: "(213:10) {#each selectedStudents as student}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (220:10) {#each behaviorCategories as category}
+    // (223:10) {#each behaviorCategories as category}
     function create_each_block_1(ctx) {
     	let p;
     	let input;
@@ -13378,11 +13371,11 @@ var app = (function () {
     			input.__value = /*category*/ ctx[28];
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[21][1].push(input);
-    			add_location(input, file$3, 221, 14, 8266);
+    			add_location(input, file$3, 224, 14, 8383);
     			attr_dev(label, "for", /*category*/ ctx[28]);
-    			add_location(label, file$3, 229, 14, 8519);
+    			add_location(label, file$3, 232, 14, 8636);
     			attr_dev(p, "class", "mb-2");
-    			add_location(p, file$3, 220, 12, 8235);
+    			add_location(p, file$3, 223, 12, 8352);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13419,14 +13412,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(220:10) {#each behaviorCategories as category}",
+    		source: "(223:10) {#each behaviorCategories as category}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (234:8) {#if !level}
+    // (237:8) {#if !level}
     function create_if_block_1(ctx) {
     	let p;
 
@@ -13435,7 +13428,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Select a Merit category from the list.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 234, 10, 8646);
+    			add_location(p, file$3, 237, 10, 8763);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13449,14 +13442,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(234:8) {#if !level}",
+    		source: "(237:8) {#if !level}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (261:10) {:else}
+    // (264:10) {:else}
     function create_else_block(ctx) {
     	let p;
 
@@ -13465,7 +13458,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please select a Merit category from the list.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 261, 12, 9687);
+    			add_location(p, file$3, 264, 12, 9804);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13482,14 +13475,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(261:10) {:else}",
+    		source: "(264:10) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (242:10) {#if categories.length > 0}
+    // (245:10) {#if categories.length > 0}
     function create_if_block(ctx) {
     	let ul;
     	let current;
@@ -13514,7 +13507,7 @@ var app = (function () {
     			}
 
     			attr_dev(ul, "class", "p-2 mx-auto");
-    			add_location(ul, file$3, 242, 12, 8941);
+    			add_location(ul, file$3, 245, 12, 9058);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -13582,14 +13575,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(242:10) {#if categories.length > 0}",
+    		source: "(245:10) {#if categories.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (244:14) {#each categories as category}
+    // (247:14) {#each categories as category}
     function create_each_block(ctx) {
     	let li;
     	let input;
@@ -13621,12 +13614,12 @@ var app = (function () {
     			input.__value = input_value_value = /*category*/ ctx[28];
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[21][0].push(input);
-    			add_location(input, file$3, 248, 18, 9194);
+    			add_location(input, file$3, 251, 18, 9311);
     			attr_dev(label, "for", label_for_value = /*category*/ ctx[28]);
     			attr_dev(label, "class", "ml-2 py-1 text-sm");
-    			add_location(label, file$3, 256, 18, 9528);
+    			add_location(label, file$3, 259, 18, 9645);
     			attr_dev(li, "class", "pt-2 pb-1");
-    			add_location(li, file$3, 244, 16, 9027);
+    			add_location(li, file$3, 247, 16, 9144);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -13718,7 +13711,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(244:14) {#each categories as category}",
+    		source: "(247:14) {#each categories as category}",
     		ctx
     	});
 
@@ -13921,96 +13914,96 @@ var app = (function () {
     			div10 = element("div");
     			button2 = element("button");
     			button2.textContent = "Submit";
-    			add_location(p0, file$3, 131, 0, 4243);
+    			add_location(p0, file$3, 134, 0, 4360);
     			attr_dev(h1, "class", "text-2xl text-blue-800 mx-2");
-    			add_location(h1, file$3, 132, 0, 4279);
+    			add_location(h1, file$3, 135, 0, 4396);
     			attr_dev(legend0, "class", "text-xl text-blue-800");
-    			add_location(legend0, file$3, 137, 6, 4514);
+    			add_location(legend0, file$3, 140, 6, 4631);
     			attr_dev(input, "class", "mt-1 w-full mr-6 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "search-field");
     			attr_dev(input, "placeholder", "Enter Student Name");
     			attr_dev(input, "autocomplete", "off");
-    			add_location(input, file$3, 138, 6, 4585);
+    			add_location(input, file$3, 141, 6, 4702);
     			attr_dev(div0, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
-    			add_location(div0, file$3, 136, 4, 4460);
+    			add_location(div0, file$3, 139, 4, 4577);
     			attr_dev(legend1, "class", "text-xl text-blue-800");
-    			add_location(legend1, file$3, 149, 6, 4999);
+    			add_location(legend1, file$3, 152, 6, 5116);
     			option0.disabled = true;
     			option0.selected = true;
     			option0.__value = "";
     			option0.value = option0.__value;
-    			add_location(option0, file$3, 156, 8, 5324);
+    			add_location(option0, file$3, 159, 8, 5441);
     			option1.__value = "All Homerooms";
     			option1.value = option1.__value;
-    			add_location(option1, file$3, 157, 8, 5395);
+    			add_location(option1, file$3, 160, 8, 5512);
     			attr_dev(select0, "class", "mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select0, "name", "homeroom");
     			attr_dev(select0, "id", "homeroom");
     			if (/*selectedHomeroom*/ ctx[1] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[17].call(select0));
-    			add_location(select0, file$3, 150, 6, 5072);
+    			add_location(select0, file$3, 153, 6, 5189);
     			attr_dev(div1, "class", "p-4 m-2 shadow-lg w-96 rounded-lg");
-    			add_location(div1, file$3, 148, 4, 4945);
+    			add_location(div1, file$3, 151, 4, 5062);
     			attr_dev(div2, "class", "flex flex-wrap");
-    			add_location(div2, file$3, 134, 2, 4392);
+    			add_location(div2, file$3, 137, 2, 4509);
     			attr_dev(legend2, "class", "text-xl text-blue-800");
-    			add_location(legend2, file$3, 167, 8, 5727);
+    			add_location(legend2, file$3, 170, 8, 5844);
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "class", "inline-block mb-2 px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button0, file$3, 168, 8, 5791);
+    			add_location(button0, file$3, 171, 8, 5908);
     			attr_dev(div3, "class", "flex justify-between");
-    			add_location(div3, file$3, 166, 6, 5684);
+    			add_location(div3, file$3, 169, 6, 5801);
     			attr_dev(p1, "class", "text-red-500 text-xs italic");
-    			add_location(p1, file$3, 175, 6, 6226);
+    			add_location(p1, file$3, 178, 6, 6343);
     			attr_dev(select1, "class", "mt-1 rounded-md h-32 w-full border-none shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select1, "name", "students");
     			attr_dev(select1, "id", "students");
     			select1.multiple = true;
     			if (/*studentsToAddToList*/ ctx[9] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[18].call(select1));
-    			add_location(select1, file$3, 176, 6, 6299);
+    			add_location(select1, file$3, 179, 6, 6416);
     			attr_dev(div4, "class", "p-4 m-2 shadow-lg w-96 rounded-lg");
-    			add_location(div4, file$3, 165, 4, 5628);
+    			add_location(div4, file$3, 168, 4, 5745);
     			attr_dev(legend3, "class", "text-xl text-blue-800");
-    			add_location(legend3, file$3, 191, 8, 6878);
+    			add_location(legend3, file$3, 194, 8, 6995);
     			attr_dev(button1, "type", "button");
     			attr_dev(button1, "class", "inline-block mb-2 px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button1, file$3, 192, 8, 6951);
+    			add_location(button1, file$3, 195, 8, 7068);
     			attr_dev(div5, "class", "flex justify-between");
-    			add_location(div5, file$3, 190, 6, 6835);
+    			add_location(div5, file$3, 193, 6, 6952);
     			attr_dev(div6, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
-    			add_location(div6, file$3, 189, 4, 6781);
+    			add_location(div6, file$3, 192, 4, 6898);
     			attr_dev(legend4, "class", "text-xl text-blue-800");
-    			add_location(legend4, file$3, 217, 8, 8091);
-    			add_location(fieldset0, file$3, 218, 8, 8163);
+    			add_location(legend4, file$3, 220, 8, 8208);
+    			add_location(fieldset0, file$3, 221, 8, 8280);
     			attr_dev(div7, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
-    			add_location(div7, file$3, 216, 6, 8035);
+    			add_location(div7, file$3, 219, 6, 8152);
     			attr_dev(legend5, "class", "text-xl text-blue-800");
-    			add_location(legend5, file$3, 239, 8, 8807);
-    			add_location(fieldset1, file$3, 240, 8, 8880);
+    			add_location(legend5, file$3, 242, 8, 8924);
+    			add_location(fieldset1, file$3, 243, 8, 8997);
     			attr_dev(div8, "class", "p-4 m-2 w-96 shadow-lg");
-    			add_location(div8, file$3, 238, 6, 8762);
+    			add_location(div8, file$3, 241, 6, 8879);
     			attr_dev(label, "for", "details");
     			attr_dev(label, "class", "block text-xl text-blue-800");
-    			add_location(label, file$3, 267, 10, 9915);
+    			add_location(label, file$3, 270, 10, 10032);
     			attr_dev(textarea, "class", "form-textarea mt-1 w-full block h-24 border-1 rounded border-blue-600");
     			attr_dev(textarea, "name", "details");
     			attr_dev(textarea, "rows", "3");
     			attr_dev(textarea, "placeholder", "Describe the issue.");
-    			add_location(textarea, file$3, 268, 10, 9998);
+    			add_location(textarea, file$3, 271, 10, 10115);
     			attr_dev(div9, "class", "p-4 m-2 w-96 shadow-lg");
-    			add_location(div9, file$3, 266, 8, 9868);
+    			add_location(div9, file$3, 269, 8, 9985);
     			attr_dev(button2, "type", "submit");
     			attr_dev(button2, "class", "inline-block px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button2, file$3, 277, 10, 10335);
+    			add_location(button2, file$3, 280, 10, 10452);
     			attr_dev(div10, "class", "p-4 m-2 w-96 shadow-lg grid place-content-center");
-    			add_location(div10, file$3, 276, 8, 10261);
+    			add_location(div10, file$3, 279, 8, 10378);
     			attr_dev(div11, "class", "flex flex-wrap");
-    			add_location(div11, file$3, 265, 6, 9831);
+    			add_location(div11, file$3, 268, 6, 9948);
     			attr_dev(div12, "class", "flex flex-wrap");
-    			add_location(div12, file$3, 215, 4, 8000);
+    			add_location(div12, file$3, 218, 4, 8117);
     			attr_dev(div13, "class", "flex flex-wrap");
-    			add_location(div13, file$3, 164, 2, 5595);
-    			add_location(form, file$3, 133, 0, 4343);
+    			add_location(div13, file$3, 167, 2, 5712);
+    			add_location(form, file$3, 136, 0, 4460);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -14408,8 +14401,12 @@ var app = (function () {
     		$$invalidate(3, details = "");
     		$$invalidate(1, selectedHomeroom = "");
     		$$invalidate(0, searchTerm = "");
-    		$$invalidate(8, selectedStudents = "");
-    		$$invalidate(4, filteredStudents = "");
+    		$$invalidate(8, selectedStudents = []);
+    		$$invalidate(8, selectedStudents);
+    		$$invalidate(4, filteredStudents = []);
+    		$$invalidate(4, filteredStudents);
+    		$$invalidate(9, studentsToAddToList = []);
+    		$$invalidate(9, studentsToAddToList);
     	}
 
     	function handleSubmit() {
@@ -14481,7 +14478,6 @@ var app = (function () {
     		onMount,
     		slide,
     		quintOut,
-    		each,
     		submitted,
     		level,
     		details,
