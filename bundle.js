@@ -13094,7 +13094,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (160:8) {#each homerooms as homeroom}
+    // (159:8) {#each homerooms as homeroom}
     function create_each_block_4(ctx) {
     	let option;
     	let t_value = /*homeroom*/ ctx[38] + "";
@@ -13107,7 +13107,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = option_value_value = /*homeroom*/ ctx[38];
     			option.value = option.__value;
-    			add_location(option, file$3, 160, 10, 5525);
+    			add_location(option, file$3, 159, 10, 5496);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13130,14 +13130,14 @@ var app = (function () {
     		block,
     		id: create_each_block_4.name,
     		type: "each",
-    		source: "(160:8) {#each homerooms as homeroom}",
+    		source: "(159:8) {#each homerooms as homeroom}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (185:8) {#each filteredStudents as student}
+    // (184:8) {#each filteredStudents as student}
     function create_each_block_3(ctx) {
     	let option;
     	let t_value = /*student*/ ctx[33].name + "";
@@ -13150,7 +13150,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = option_value_value = /*student*/ ctx[33];
     			option.value = option.__value;
-    			add_location(option, file$3, 185, 10, 6655);
+    			add_location(option, file$3, 184, 10, 6619);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13173,14 +13173,14 @@ var app = (function () {
     		block,
     		id: create_each_block_3.name,
     		type: "each",
-    		source: "(185:8) {#each filteredStudents as student}",
+    		source: "(184:8) {#each filteredStudents as student}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (203:6) {:else}
+    // (202:6) {:else}
     function create_else_block_1(ctx) {
     	let select;
     	let mounted;
@@ -13201,12 +13201,12 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(select, "class", "mt-1 rounded-md h-32 w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
+    			attr_dev(select, "class", "mt-1 rounded-md h-32 w-full border-none shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select, "name", "addedStudents");
     			attr_dev(select, "id", "addedStudents");
     			select.multiple = true;
     			if (/*studentsToRemoveFromList*/ ctx[10] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[19].call(select));
-    			add_location(select, file$3, 203, 8, 7552);
+    			add_location(select, file$3, 202, 8, 7525);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, select, anchor);
@@ -13263,14 +13263,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(203:6) {:else}",
+    		source: "(202:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (201:6) {#if selectedStudents.length < 1}
+    // (200:6) {#if selectedStudents.length < 1}
     function create_if_block_2(ctx) {
     	let p;
 
@@ -13279,7 +13279,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please select a student";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 201, 8, 7463);
+    			add_location(p, file$3, 200, 8, 7436);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13294,14 +13294,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(201:6) {#if selectedStudents.length < 1}",
+    		source: "(200:6) {#if selectedStudents.length < 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (211:10) {#each selectedStudents as student}
+    // (210:10) {#each selectedStudents as student}
     function create_each_block_2(ctx) {
     	let option;
     	let t0_value = /*student*/ ctx[33].id + "";
@@ -13319,7 +13319,7 @@ var app = (function () {
     			t2 = text(t2_value);
     			option.__value = option_value_value = /*student*/ ctx[33];
     			option.value = option.__value;
-    			add_location(option, file$3, 211, 12, 7890);
+    			add_location(option, file$3, 210, 12, 7875);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13345,14 +13345,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(211:10) {#each selectedStudents as student}",
+    		source: "(210:10) {#each selectedStudents as student}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (221:8) {#each behaviorCategories as category}
+    // (220:10) {#each behaviorCategories as category}
     function create_each_block_1(ctx) {
     	let p;
     	let input;
@@ -13378,11 +13378,11 @@ var app = (function () {
     			input.__value = /*category*/ ctx[28];
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[21][1].push(input);
-    			add_location(input, file$3, 222, 12, 8292);
+    			add_location(input, file$3, 221, 14, 8266);
     			attr_dev(label, "for", /*category*/ ctx[28]);
-    			add_location(label, file$3, 230, 12, 8529);
+    			add_location(label, file$3, 229, 14, 8519);
     			attr_dev(p, "class", "mb-2");
-    			add_location(p, file$3, 221, 10, 8263);
+    			add_location(p, file$3, 220, 12, 8235);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13419,14 +13419,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(221:8) {#each behaviorCategories as category}",
+    		source: "(220:10) {#each behaviorCategories as category}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (235:6) {#if !level}
+    // (234:8) {#if !level}
     function create_if_block_1(ctx) {
     	let p;
 
@@ -13435,7 +13435,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Select a Merit category from the list.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 235, 8, 8646);
+    			add_location(p, file$3, 234, 10, 8646);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13449,14 +13449,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(235:6) {#if !level}",
+    		source: "(234:8) {#if !level}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (261:8) {:else}
+    // (261:10) {:else}
     function create_else_block(ctx) {
     	let p;
 
@@ -13465,7 +13465,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please select a Merit category from the list.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 261, 10, 9626);
+    			add_location(p, file$3, 261, 12, 9687);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13482,14 +13482,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(261:8) {:else}",
+    		source: "(261:10) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (242:8) {#if categories.length > 0}
+    // (242:10) {#if categories.length > 0}
     function create_if_block(ctx) {
     	let ul;
     	let current;
@@ -13514,7 +13514,7 @@ var app = (function () {
     			}
 
     			attr_dev(ul, "class", "p-2 mx-auto");
-    			add_location(ul, file$3, 242, 10, 8918);
+    			add_location(ul, file$3, 242, 12, 8941);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -13582,14 +13582,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(242:8) {#if categories.length > 0}",
+    		source: "(242:10) {#if categories.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (244:12) {#each categories as category}
+    // (244:14) {#each categories as category}
     function create_each_block(ctx) {
     	let li;
     	let input;
@@ -13621,12 +13621,12 @@ var app = (function () {
     			input.__value = input_value_value = /*category*/ ctx[28];
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[21][0].push(input);
-    			add_location(input, file$3, 248, 16, 9159);
+    			add_location(input, file$3, 248, 18, 9194);
     			attr_dev(label, "for", label_for_value = /*category*/ ctx[28]);
     			attr_dev(label, "class", "ml-2 py-1 text-sm");
-    			add_location(label, file$3, 256, 16, 9477);
+    			add_location(label, file$3, 256, 18, 9528);
     			attr_dev(li, "class", "pt-2 pb-1");
-    			add_location(li, file$3, 244, 14, 9000);
+    			add_location(li, file$3, 244, 16, 9027);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -13718,7 +13718,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(244:12) {#each categories as category}",
+    		source: "(244:14) {#each categories as category}",
     		ctx
     	});
 
@@ -13731,7 +13731,7 @@ var app = (function () {
     	let h1;
     	let t3;
     	let form;
-    	let div10;
+    	let div2;
     	let div0;
     	let legend0;
     	let t5;
@@ -13744,8 +13744,9 @@ var app = (function () {
     	let option0;
     	let option1;
     	let t11;
+    	let div13;
+    	let div4;
     	let div3;
-    	let div2;
     	let legend2;
     	let t13;
     	let button0;
@@ -13754,32 +13755,34 @@ var app = (function () {
     	let t17;
     	let select1;
     	let t18;
+    	let div6;
     	let div5;
-    	let div4;
     	let legend3;
     	let t20;
     	let button1;
     	let t22;
     	let t23;
-    	let div6;
+    	let div12;
+    	let div7;
     	let legend4;
     	let t25;
     	let fieldset0;
     	let t26;
     	let t27;
-    	let div7;
+    	let div8;
     	let legend5;
     	let t29;
     	let fieldset1;
     	let current_block_type_index;
     	let if_block2;
     	let t30;
-    	let div8;
+    	let div11;
+    	let div9;
     	let label;
     	let t32;
     	let textarea;
     	let t33;
-    	let div9;
+    	let div10;
     	let button2;
     	let current;
     	let mounted;
@@ -13836,7 +13839,7 @@ var app = (function () {
     			h1.textContent = "Student Merit Form";
     			t3 = space();
     			form = element("form");
-    			div10 = element("div");
+    			div2 = element("div");
     			div0 = element("div");
     			legend0 = element("legend");
     			legend0.textContent = "Search by Student";
@@ -13858,8 +13861,9 @@ var app = (function () {
     			}
 
     			t11 = space();
+    			div13 = element("div");
+    			div4 = element("div");
     			div3 = element("div");
-    			div2 = element("div");
     			legend2 = element("legend");
     			legend2.textContent = "Students";
     			t13 = space();
@@ -13876,8 +13880,8 @@ var app = (function () {
     			}
 
     			t18 = space();
+    			div6 = element("div");
     			div5 = element("div");
-    			div4 = element("div");
     			legend3 = element("legend");
     			legend3.textContent = "Selected Students";
     			t20 = space();
@@ -13886,7 +13890,8 @@ var app = (function () {
     			t22 = space();
     			if_block0.c();
     			t23 = space();
-    			div6 = element("div");
+    			div12 = element("div");
+    			div7 = element("div");
     			legend4 = element("legend");
     			legend4.textContent = "Merit Categories";
     			t25 = space();
@@ -13899,106 +13904,113 @@ var app = (function () {
     			t26 = space();
     			if (if_block1) if_block1.c();
     			t27 = space();
-    			div7 = element("div");
+    			div8 = element("div");
     			legend5 = element("legend");
     			legend5.textContent = "Merit Information";
     			t29 = space();
     			fieldset1 = element("fieldset");
     			if_block2.c();
     			t30 = space();
-    			div8 = element("div");
+    			div11 = element("div");
+    			div9 = element("div");
     			label = element("label");
     			label.textContent = "Details";
     			t32 = space();
     			textarea = element("textarea");
     			t33 = space();
-    			div9 = element("div");
+    			div10 = element("div");
     			button2 = element("button");
     			button2.textContent = "Submit";
     			add_location(p0, file$3, 131, 0, 4243);
-    			attr_dev(h1, "class", "text-2xl text-blue-800");
+    			attr_dev(h1, "class", "text-2xl text-blue-800 mx-2");
     			add_location(h1, file$3, 132, 0, 4279);
     			attr_dev(legend0, "class", "text-xl text-blue-800");
-    			add_location(legend0, file$3, 138, 6, 4552);
+    			add_location(legend0, file$3, 137, 6, 4514);
     			attr_dev(input, "class", "mt-1 w-full mr-6 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "search-field");
     			attr_dev(input, "placeholder", "Enter Student Name");
     			attr_dev(input, "autocomplete", "off");
-    			add_location(input, file$3, 139, 6, 4623);
-    			attr_dev(div0, "class", "p-4 shadow-lg rounded-lg");
-    			add_location(div0, file$3, 137, 4, 4507);
+    			add_location(input, file$3, 138, 6, 4585);
+    			attr_dev(div0, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
+    			add_location(div0, file$3, 136, 4, 4460);
     			attr_dev(legend1, "class", "text-xl text-blue-800");
-    			add_location(legend1, file$3, 150, 6, 5028);
+    			add_location(legend1, file$3, 149, 6, 4999);
     			option0.disabled = true;
     			option0.selected = true;
     			option0.__value = "";
     			option0.value = option0.__value;
-    			add_location(option0, file$3, 157, 8, 5353);
+    			add_location(option0, file$3, 156, 8, 5324);
     			option1.__value = "All Homerooms";
     			option1.value = option1.__value;
-    			add_location(option1, file$3, 158, 8, 5424);
+    			add_location(option1, file$3, 157, 8, 5395);
     			attr_dev(select0, "class", "mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select0, "name", "homeroom");
     			attr_dev(select0, "id", "homeroom");
     			if (/*selectedHomeroom*/ ctx[1] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[17].call(select0));
-    			add_location(select0, file$3, 151, 6, 5101);
-    			attr_dev(div1, "class", "p-4 shadow-lg rounded-lg");
-    			add_location(div1, file$3, 149, 4, 4983);
+    			add_location(select0, file$3, 150, 6, 5072);
+    			attr_dev(div1, "class", "p-4 m-2 shadow-lg w-96 rounded-lg");
+    			add_location(div1, file$3, 148, 4, 4945);
+    			attr_dev(div2, "class", "flex flex-wrap");
+    			add_location(div2, file$3, 134, 2, 4392);
     			attr_dev(legend2, "class", "text-xl text-blue-800");
-    			add_location(legend2, file$3, 168, 8, 5762);
+    			add_location(legend2, file$3, 167, 8, 5727);
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "class", "inline-block mb-2 px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button0, file$3, 169, 8, 5827);
-    			attr_dev(div2, "class", "flex justify-between");
-    			add_location(div2, file$3, 167, 6, 5719);
+    			add_location(button0, file$3, 168, 8, 5791);
+    			attr_dev(div3, "class", "flex justify-between");
+    			add_location(div3, file$3, 166, 6, 5684);
     			attr_dev(p1, "class", "text-red-500 text-xs italic");
-    			add_location(p1, file$3, 176, 6, 6262);
+    			add_location(p1, file$3, 175, 6, 6226);
     			attr_dev(select1, "class", "mt-1 rounded-md h-32 w-full border-none shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select1, "name", "students");
     			attr_dev(select1, "id", "students");
     			select1.multiple = true;
     			if (/*studentsToAddToList*/ ctx[9] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[18].call(select1));
-    			add_location(select1, file$3, 177, 6, 6335);
-    			attr_dev(div3, "class", "p-4 shadow-lg rounded-lg");
-    			add_location(div3, file$3, 166, 4, 5674);
+    			add_location(select1, file$3, 176, 6, 6299);
+    			attr_dev(div4, "class", "p-4 m-2 shadow-lg w-96 rounded-lg");
+    			add_location(div4, file$3, 165, 4, 5628);
     			attr_dev(legend3, "class", "text-xl text-blue-800");
-    			add_location(legend3, file$3, 192, 8, 6905);
+    			add_location(legend3, file$3, 191, 8, 6878);
     			attr_dev(button1, "type", "button");
     			attr_dev(button1, "class", "inline-block mb-2 px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button1, file$3, 193, 8, 6978);
-    			attr_dev(div4, "class", "flex justify-between");
-    			add_location(div4, file$3, 191, 6, 6862);
-    			attr_dev(div5, "class", "p-4 shadow-lg rounded-lg");
-    			add_location(div5, file$3, 190, 4, 6817);
+    			add_location(button1, file$3, 192, 8, 6951);
+    			attr_dev(div5, "class", "flex justify-between");
+    			add_location(div5, file$3, 190, 6, 6835);
+    			attr_dev(div6, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
+    			add_location(div6, file$3, 189, 4, 6781);
     			attr_dev(legend4, "class", "text-xl text-blue-800");
-    			add_location(legend4, file$3, 218, 6, 8125);
-    			add_location(fieldset0, file$3, 219, 6, 8195);
-    			attr_dev(div6, "class", "p-4 shadow-lg rounded-lg");
-    			add_location(div6, file$3, 217, 4, 8080);
+    			add_location(legend4, file$3, 217, 8, 8091);
+    			add_location(fieldset0, file$3, 218, 8, 8163);
+    			attr_dev(div7, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
+    			add_location(div7, file$3, 216, 6, 8035);
     			attr_dev(legend5, "class", "text-xl text-blue-800");
-    			add_location(legend5, file$3, 239, 6, 8790);
-    			add_location(fieldset1, file$3, 240, 6, 8861);
-    			attr_dev(div7, "class", "p-4 shadow-lg ");
-    			add_location(div7, file$3, 238, 4, 8755);
+    			add_location(legend5, file$3, 239, 8, 8807);
+    			add_location(fieldset1, file$3, 240, 8, 8880);
+    			attr_dev(div8, "class", "p-4 m-2 w-96 shadow-lg");
+    			add_location(div8, file$3, 238, 6, 8762);
     			attr_dev(label, "for", "details");
     			attr_dev(label, "class", "block text-xl text-blue-800");
-    			add_location(label, file$3, 266, 6, 9787);
+    			add_location(label, file$3, 267, 10, 9915);
     			attr_dev(textarea, "class", "form-textarea mt-1 w-full block h-24 border-1 rounded border-blue-600");
     			attr_dev(textarea, "name", "details");
     			attr_dev(textarea, "rows", "3");
     			attr_dev(textarea, "placeholder", "Describe the issue.");
-    			add_location(textarea, file$3, 267, 6, 9866);
-    			attr_dev(div8, "class", "grid");
-    			add_location(div8, file$3, 265, 4, 9762);
+    			add_location(textarea, file$3, 268, 10, 9998);
+    			attr_dev(div9, "class", "p-4 m-2 w-96 shadow-lg");
+    			add_location(div9, file$3, 266, 8, 9868);
     			attr_dev(button2, "type", "submit");
     			attr_dev(button2, "class", "inline-block px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button2, file$3, 276, 6, 10143);
-    			attr_dev(div9, "class", "grid place-content-center");
-    			add_location(div9, file$3, 275, 4, 10097);
-    			attr_dev(div10, "class", "grid grid-cols-2 pb-2 gap-4 font-mono text-sm font-bold leading-6 rounded-lg");
-    			add_location(div10, file$3, 136, 2, 4411);
-    			add_location(form, file$3, 135, 0, 4362);
+    			add_location(button2, file$3, 277, 10, 10335);
+    			attr_dev(div10, "class", "p-4 m-2 w-96 shadow-lg grid place-content-center");
+    			add_location(div10, file$3, 276, 8, 10261);
+    			attr_dev(div11, "class", "flex flex-wrap");
+    			add_location(div11, file$3, 265, 6, 9831);
+    			attr_dev(div12, "class", "flex flex-wrap");
+    			add_location(div12, file$3, 215, 4, 8000);
+    			attr_dev(div13, "class", "flex flex-wrap");
+    			add_location(div13, file$3, 164, 2, 5595);
+    			add_location(form, file$3, 133, 0, 4343);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -14009,14 +14021,14 @@ var app = (function () {
     			insert_dev(target, h1, anchor);
     			insert_dev(target, t3, anchor);
     			insert_dev(target, form, anchor);
-    			append_dev(form, div10);
-    			append_dev(div10, div0);
+    			append_dev(form, div2);
+    			append_dev(div2, div0);
     			append_dev(div0, legend0);
     			append_dev(div0, t5);
     			append_dev(div0, input);
     			set_input_value(input, /*searchTerm*/ ctx[0]);
-    			append_dev(div10, t6);
-    			append_dev(div10, div1);
+    			append_dev(div2, t6);
+    			append_dev(div2, div1);
     			append_dev(div1, legend1);
     			append_dev(div1, t8);
     			append_dev(div1, select0);
@@ -14028,57 +14040,60 @@ var app = (function () {
     			}
 
     			select_option(select0, /*selectedHomeroom*/ ctx[1]);
-    			append_dev(div10, t11);
-    			append_dev(div10, div3);
-    			append_dev(div3, div2);
-    			append_dev(div2, legend2);
-    			append_dev(div2, t13);
-    			append_dev(div2, button0);
-    			append_dev(div3, t15);
-    			append_dev(div3, p1);
-    			append_dev(div3, t17);
-    			append_dev(div3, select1);
+    			append_dev(form, t11);
+    			append_dev(form, div13);
+    			append_dev(div13, div4);
+    			append_dev(div4, div3);
+    			append_dev(div3, legend2);
+    			append_dev(div3, t13);
+    			append_dev(div3, button0);
+    			append_dev(div4, t15);
+    			append_dev(div4, p1);
+    			append_dev(div4, t17);
+    			append_dev(div4, select1);
 
     			for (let i = 0; i < each_blocks_1.length; i += 1) {
     				each_blocks_1[i].m(select1, null);
     			}
 
     			select_options(select1, /*studentsToAddToList*/ ctx[9]);
-    			append_dev(div10, t18);
-    			append_dev(div10, div5);
-    			append_dev(div5, div4);
-    			append_dev(div4, legend3);
-    			append_dev(div4, t20);
-    			append_dev(div4, button1);
-    			append_dev(div5, t22);
-    			if_block0.m(div5, null);
-    			append_dev(div10, t23);
-    			append_dev(div10, div6);
-    			append_dev(div6, legend4);
-    			append_dev(div6, t25);
-    			append_dev(div6, fieldset0);
+    			append_dev(div13, t18);
+    			append_dev(div13, div6);
+    			append_dev(div6, div5);
+    			append_dev(div5, legend3);
+    			append_dev(div5, t20);
+    			append_dev(div5, button1);
+    			append_dev(div6, t22);
+    			if_block0.m(div6, null);
+    			append_dev(div13, t23);
+    			append_dev(div13, div12);
+    			append_dev(div12, div7);
+    			append_dev(div7, legend4);
+    			append_dev(div7, t25);
+    			append_dev(div7, fieldset0);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(fieldset0, null);
     			}
 
-    			append_dev(div6, t26);
-    			if (if_block1) if_block1.m(div6, null);
-    			append_dev(div10, t27);
-    			append_dev(div10, div7);
-    			append_dev(div7, legend5);
-    			append_dev(div7, t29);
-    			append_dev(div7, fieldset1);
+    			append_dev(div7, t26);
+    			if (if_block1) if_block1.m(div7, null);
+    			append_dev(div12, t27);
+    			append_dev(div12, div8);
+    			append_dev(div8, legend5);
+    			append_dev(div8, t29);
+    			append_dev(div8, fieldset1);
     			if_blocks[current_block_type_index].m(fieldset1, null);
-    			append_dev(div10, t30);
-    			append_dev(div10, div8);
-    			append_dev(div8, label);
-    			append_dev(div8, t32);
-    			append_dev(div8, textarea);
+    			append_dev(div12, t30);
+    			append_dev(div12, div11);
+    			append_dev(div11, div9);
+    			append_dev(div9, label);
+    			append_dev(div9, t32);
+    			append_dev(div9, textarea);
     			set_input_value(textarea, /*details*/ ctx[3]);
-    			append_dev(div10, t33);
-    			append_dev(div10, div9);
-    			append_dev(div9, button2);
+    			append_dev(div11, t33);
+    			append_dev(div11, div10);
+    			append_dev(div10, button2);
     			current = true;
 
     			if (!mounted) {
@@ -14165,7 +14180,7 @@ var app = (function () {
 
     				if (if_block0) {
     					if_block0.c();
-    					if_block0.m(div5, null);
+    					if_block0.m(div6, null);
     				}
     			}
 
@@ -14197,7 +14212,7 @@ var app = (function () {
     				if (if_block1) ; else {
     					if_block1 = create_if_block_1(ctx);
     					if_block1.c();
-    					if_block1.m(div6, null);
+    					if_block1.m(div7, null);
     				}
     			} else if (if_block1) {
     				if_block1.d(1);
