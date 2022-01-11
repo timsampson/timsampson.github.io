@@ -177,6 +177,9 @@ var app = (function () {
     function select_multiple_value(select) {
         return [].map.call(select.querySelectorAll(':checked'), option => option.__value);
     }
+    function toggle_class(element, name, toggle) {
+        element.classList[toggle ? 'add' : 'remove'](name);
+    }
     function custom_event(type, detail, bubbles = false) {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, bubbles, false, detail);
@@ -13046,6 +13049,20 @@ var app = (function () {
             css: t => `opacity: ${t * o}`
         };
     }
+    function fly(node, { delay = 0, duration = 400, easing = cubicOut, x = 0, y = 0, opacity = 0 } = {}) {
+        const style = getComputedStyle(node);
+        const target_opacity = +style.opacity;
+        const transform = style.transform === 'none' ? '' : style.transform;
+        const od = target_opacity * (1 - opacity);
+        return {
+            delay,
+            duration,
+            easing,
+            css: (t, u) => `
+			transform: ${transform} translate(${(1 - t) * x}px, ${(1 - t) * y}px);
+			opacity: ${target_opacity - (od * u)}`
+        };
+    }
     function slide(node, { delay = 0, duration = 400, easing = cubicOut } = {}) {
         const style = getComputedStyle(node);
         const opacity = +style.opacity;
@@ -13103,14 +13120,20 @@ var app = (function () {
 
     function get_each_context_4(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[39] = list[i];
+    	child_ctx[34] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_5(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[41] = list[i];
     	return child_ctx;
     }
 
     // (179:10) {#each homerooms as homeroom}
-    function create_each_block_4(ctx) {
+    function create_each_block_5(ctx) {
     	let option;
-    	let t_value = /*homeroom*/ ctx[39] + "";
+    	let t_value = /*homeroom*/ ctx[41] + "";
     	let t;
     	let option_value_value;
 
@@ -13118,18 +13141,18 @@ var app = (function () {
     		c: function create() {
     			option = element("option");
     			t = text(t_value);
-    			option.__value = option_value_value = /*homeroom*/ ctx[39];
+    			option.__value = option_value_value = /*homeroom*/ ctx[41];
     			option.value = option.__value;
-    			add_location(option, file$3, 179, 12, 6235);
+    			add_location(option, file$3, 179, 12, 6240);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
     			append_dev(option, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*homerooms*/ 16 && t_value !== (t_value = /*homeroom*/ ctx[39] + "")) set_data_dev(t, t_value);
+    			if (dirty[0] & /*homerooms*/ 16 && t_value !== (t_value = /*homeroom*/ ctx[41] + "")) set_data_dev(t, t_value);
 
-    			if (dirty[0] & /*homerooms*/ 16 && option_value_value !== (option_value_value = /*homeroom*/ ctx[39])) {
+    			if (dirty[0] & /*homerooms*/ 16 && option_value_value !== (option_value_value = /*homeroom*/ ctx[41])) {
     				prop_dev(option, "__value", option_value_value);
     				option.value = option.__value;
     			}
@@ -13141,7 +13164,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_4.name,
+    		id: create_each_block_5.name,
     		type: "each",
     		source: "(179:10) {#each homerooms as homeroom}",
     		ctx
@@ -13151,7 +13174,7 @@ var app = (function () {
     }
 
     // (203:8) {:else}
-    function create_else_block_2(ctx) {
+    function create_else_block_3(ctx) {
     	let p;
     	let p_intro;
 
@@ -13160,7 +13183,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please search for students";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 203, 10, 7349);
+    			add_location(p, file$3, 203, 10, 7346);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13181,7 +13204,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block_2.name,
+    		id: create_else_block_3.name,
     		type: "else",
     		source: "(203:8) {:else}",
     		ctx
@@ -13191,7 +13214,7 @@ var app = (function () {
     }
 
     // (199:8) {#if filteredStudents.length > 0}
-    function create_if_block_5(ctx) {
+    function create_if_block_6(ctx) {
     	let p;
     	let p_intro;
 
@@ -13200,7 +13223,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please select a student";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 199, 10, 7203);
+    			add_location(p, file$3, 199, 10, 7200);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13221,7 +13244,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_5.name,
+    		id: create_if_block_6.name,
     		type: "if",
     		source: "(199:8) {#if filteredStudents.length > 0}",
     		ctx
@@ -13231,7 +13254,7 @@ var app = (function () {
     }
 
     // (215:10) {#each filteredStudents as student}
-    function create_each_block_3(ctx) {
+    function create_each_block_4(ctx) {
     	let option;
     	let t_value = /*student*/ ctx[34].name + "";
     	let t;
@@ -13244,7 +13267,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = option_value_value = /*student*/ ctx[34];
     			option.value = option.__value;
-    			add_location(option, file$3, 215, 12, 7842);
+    			add_location(option, file$3, 215, 12, 7839);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13274,7 +13297,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_3.name,
+    		id: create_each_block_4.name,
     		type: "each",
     		source: "(215:10) {#each filteredStudents as student}",
     		ctx
@@ -13283,13 +13306,13 @@ var app = (function () {
     	return block;
     }
 
-    // (234:10) {:else}
-    function create_else_block_1(ctx) {
+    // (235:10) {:else}
+    function create_else_block_2(ctx) {
     	let t;
 
     	const block = {
     		c: function create() {
-    			t = text("First select some students.");
+    			t = text("First add some students.");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t, anchor);
@@ -13301,22 +13324,22 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block_1.name,
+    		id: create_else_block_2.name,
     		type: "else",
-    		source: "(234:10) {:else}",
+    		source: "(235:10) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (232:10) {#if selectedStudents.length > 0}
-    function create_if_block_4(ctx) {
+    // (233:10) {#if selectedStudents.length > 0}
+    function create_if_block_5(ctx) {
     	let t;
 
     	const block = {
     		c: function create() {
-    			t = text("If on mobile tap to access current Selection.");
+    			t = text("If on mobile tap to view list.");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t, anchor);
@@ -13328,17 +13351,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4.name,
+    		id: create_if_block_5.name,
     		type: "if",
-    		source: "(232:10) {#if selectedStudents.length > 0}",
+    		source: "(233:10) {#if selectedStudents.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (245:10) {#each selectedStudents as student}
-    function create_each_block_2(ctx) {
+    // (246:10) {#each selectedStudents as student}
+    function create_each_block_3(ctx) {
     	let option;
     	let t0_value = /*student*/ ctx[34].id + "";
     	let t0;
@@ -13358,7 +13381,7 @@ var app = (function () {
     			t2 = text(t2_value);
     			option.__value = option_value_value = /*student*/ ctx[34];
     			option.value = option.__value;
-    			add_location(option, file$3, 245, 12, 9288);
+    			add_location(option, file$3, 246, 12, 9266);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -13400,16 +13423,144 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_2.name,
+    		id: create_each_block_3.name,
     		type: "each",
-    		source: "(245:10) {#each selectedStudents as student}",
+    		source: "(246:10) {#each selectedStudents as student}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (265:8) {:else}
+    // (263:10) {:else}
+    function create_else_block_1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("First add some students.");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1.name,
+    		type: "else",
+    		source: "(263:10) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (261:10) {#if selectedStudents.length > 0}
+    function create_if_block_4(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Your currently selected students.");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_4.name,
+    		type: "if",
+    		source: "(261:10) {#if selectedStudents.length > 0}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (271:10) {#each selectedStudents as student}
+    function create_each_block_2(ctx) {
+    	let p;
+    	let t0_value = /*student*/ ctx[34].id + "";
+    	let t0;
+    	let t1;
+    	let t2_value = /*student*/ ctx[34].name + "";
+    	let t2;
+    	let t3;
+    	let p_value_value;
+    	let p_intro;
+    	let p_outro;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			t0 = text(t0_value);
+    			t1 = text(": ");
+    			t2 = text(t2_value);
+    			t3 = space();
+    			attr_dev(p, "class", "m-1 px-2 py-1 font-semibold text-xs border border-1 bg-blue-600 text-white rounded-full shadow-sm");
+    			attr_dev(p, "value", p_value_value = /*student*/ ctx[34]);
+    			add_location(p, file$3, 271, 12, 10179);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t0);
+    			append_dev(p, t1);
+    			append_dev(p, t2);
+    			append_dev(p, t3);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if ((!current || dirty[0] & /*selectedStudents*/ 128) && t0_value !== (t0_value = /*student*/ ctx[34].id + "")) set_data_dev(t0, t0_value);
+    			if ((!current || dirty[0] & /*selectedStudents*/ 128) && t2_value !== (t2_value = /*student*/ ctx[34].name + "")) set_data_dev(t2, t2_value);
+
+    			if (!current || dirty[0] & /*selectedStudents*/ 128 && p_value_value !== (p_value_value = /*student*/ ctx[34])) {
+    				attr_dev(p, "value", p_value_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (p_outro) p_outro.end(1);
+    				p_intro = create_in_transition(p, fade, {});
+    				p_intro.start();
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (p_intro) p_intro.invalidate();
+    			p_outro = create_out_transition(p, fly, { x: 100 });
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    			if (detaching && p_outro) p_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(271:10) {#each selectedStudents as student}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (294:8) {:else}
     function create_else_block(ctx) {
     	let p;
     	let p_intro;
@@ -13419,7 +13570,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Now select they information types.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 265, 10, 10032);
+    			add_location(p, file$3, 294, 10, 11016);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13442,14 +13593,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(265:8) {:else}",
+    		source: "(294:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (261:8) {#if !response.level}
+    // (290:8) {#if !response.level}
     function create_if_block_3(ctx) {
     	let p;
     	let p_intro;
@@ -13459,7 +13610,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Select a Merit category from the list.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 261, 10, 9871);
+    			add_location(p, file$3, 290, 10, 10855);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13482,14 +13633,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(261:8) {#if !response.level}",
+    		source: "(290:8) {#if !response.level}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (271:10) {#each behaviorCategories as category}
+    // (300:10) {#each behaviorCategories as category}
     function create_each_block_1(ctx) {
     	let p;
     	let input;
@@ -13516,12 +13667,12 @@ var app = (function () {
     			input.__value = /*category*/ ctx[31];
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[20][1].push(input);
-    			add_location(input, file$3, 272, 14, 10288);
+    			add_location(input, file$3, 301, 14, 11272);
     			attr_dev(label, "for", /*category*/ ctx[31]);
     			attr_dev(label, "class", "ml-2");
-    			add_location(label, file$3, 281, 14, 10597);
+    			add_location(label, file$3, 310, 14, 11581);
     			attr_dev(p, "class", "mb-2");
-    			add_location(p, file$3, 271, 12, 10257);
+    			add_location(p, file$3, 300, 12, 11241);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13567,14 +13718,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(271:10) {#each behaviorCategories as category}",
+    		source: "(300:10) {#each behaviorCategories as category}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (290:10) {#if behaviorKinds.length < 1}
+    // (319:10) {#if behaviorKinds.length < 1}
     function create_if_block_2(ctx) {
     	let p;
 
@@ -13583,7 +13734,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Please select a Merit category from the list.";
     			attr_dev(p, "class", "text-red-500 text-xs italic");
-    			add_location(p, file$3, 290, 12, 10907);
+    			add_location(p, file$3, 319, 12, 11891);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -13597,14 +13748,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(290:10) {#if behaviorKinds.length < 1}",
+    		source: "(319:10) {#if behaviorKinds.length < 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (293:10) {#if behaviorKinds.length > 0}
+    // (322:10) {#if behaviorKinds.length > 0}
     function create_if_block(ctx) {
     	let previous_key = /*behaviorKinds*/ ctx[5];
     	let key_block_anchor;
@@ -13653,14 +13804,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(293:10) {#if behaviorKinds.length > 0}",
+    		source: "(322:10) {#if behaviorKinds.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (296:16) {#each behaviorKinds as kind}
+    // (325:16) {#each behaviorKinds as kind}
     function create_each_block(ctx) {
     	let li;
     	let input;
@@ -13691,12 +13842,12 @@ var app = (function () {
     			input.__value = input_value_value = /*kind*/ ctx[28];
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[20][0].push(input);
-    			add_location(input, file$3, 301, 20, 11378);
+    			add_location(input, file$3, 330, 20, 12362);
     			attr_dev(label, "for", label_for_value = /*kind*/ ctx[28]);
     			attr_dev(label, "class", "ml-2");
-    			add_location(label, file$3, 309, 20, 11729);
+    			add_location(label, file$3, 338, 20, 12713);
     			attr_dev(li, "class", "pt-3");
-    			add_location(li, file$3, 296, 18, 11189);
+    			add_location(li, file$3, 325, 18, 12173);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -13761,14 +13912,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(296:16) {#each behaviorKinds as kind}",
+    		source: "(325:16) {#each behaviorKinds as kind}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (330:20) {#if otherCheckboxSelected}
+    // (359:20) {#if otherCheckboxSelected}
     function create_if_block_1(ctx) {
     	let input;
     	let mounted;
@@ -13782,7 +13933,7 @@ var app = (function () {
     			attr_dev(input, "id", "otherValue");
     			attr_dev(input, "name", "otherValue");
     			input.required = true;
-    			add_location(input, file$3, 330, 22, 12640);
+    			add_location(input, file$3, 359, 22, 13624);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -13809,14 +13960,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(330:20) {#if otherCheckboxSelected}",
+    		source: "(359:20) {#if otherCheckboxSelected}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (294:12) {#key behaviorKinds}
+    // (323:12) {#key behaviorKinds}
     function create_key_block(ctx) {
     	let ul;
     	let t0;
@@ -13869,16 +14020,16 @@ var app = (function () {
     			input.__value = "other";
     			input.value = input.__value;
     			/*$$binding_groups*/ ctx[20][0].push(input);
-    			add_location(input, file$3, 318, 20, 12083);
+    			add_location(input, file$3, 347, 20, 13067);
     			attr_dev(label, "for", "otherValue");
     			attr_dev(label, "class", "ml-2 mt-1 mr-2");
-    			add_location(label, file$3, 327, 20, 12508);
+    			add_location(label, file$3, 356, 20, 13492);
     			attr_dev(div, "class", "flex justify items-center");
-    			add_location(div, file$3, 317, 18, 12023);
+    			add_location(div, file$3, 346, 18, 13007);
     			attr_dev(li, "class", "pt-2 pb-1");
-    			add_location(li, file$3, 312, 16, 11839);
+    			add_location(li, file$3, 341, 16, 12823);
     			attr_dev(ul, "class", "p-2 mx-auto");
-    			add_location(ul, file$3, 294, 14, 11100);
+    			add_location(ul, file$3, 323, 14, 12084);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -13995,7 +14146,7 @@ var app = (function () {
     		block,
     		id: create_key_block.name,
     		type: "key",
-    		source: "(294:12) {#key behaviorKinds}",
+    		source: "(323:12) {#key behaviorKinds}",
     		ctx
     	});
 
@@ -14003,7 +14154,7 @@ var app = (function () {
     }
 
     function create_fragment$3(ctx) {
-    	let div14;
+    	let div17;
     	let p0;
     	let t1;
     	let h1;
@@ -14046,35 +14197,58 @@ var app = (function () {
     	let t26;
     	let select2;
     	let t27;
+    	let div10;
+    	let div9;
     	let p4;
     	let t29;
-    	let div10;
-    	let div8;
-    	let legend4;
-    	let t31;
-    	let t32;
-    	let fieldset0;
-    	let t33;
-    	let div9;
-    	let legend5;
-    	let t35;
-    	let fieldset1;
-    	let t36;
-    	let t37;
     	let p5;
-    	let t39;
+    	let t30;
+    	let div8;
+    	let t31;
+    	let p6;
+    	let t33;
     	let div13;
     	let div11;
-    	let label;
-    	let t41;
-    	let textarea;
-    	let t42;
+    	let legend4;
+    	let t35;
+    	let t36;
+    	let fieldset0;
+    	let t37;
     	let div12;
+    	let legend5;
+    	let t39;
+    	let fieldset1;
+    	let t40;
+    	let t41;
+    	let p7;
+    	let t43;
+    	let div16;
+    	let div14;
+    	let label;
+    	let t45;
+    	let textarea;
+    	let t46;
+    	let div15;
     	let button2;
     	let current;
     	let mounted;
     	let dispose;
-    	let each_value_4 = /*homerooms*/ ctx[4];
+    	let each_value_5 = /*homerooms*/ ctx[4];
+    	validate_each_argument(each_value_5);
+    	let each_blocks_4 = [];
+
+    	for (let i = 0; i < each_value_5.length; i += 1) {
+    		each_blocks_4[i] = create_each_block_5(get_each_context_5(ctx, each_value_5, i));
+    	}
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*filteredStudents*/ ctx[3].length > 0) return create_if_block_6;
+    		return create_else_block_3;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block0 = current_block_type(ctx);
+    	let each_value_4 = /*filteredStudents*/ ctx[3];
     	validate_each_argument(each_value_4);
     	let each_blocks_3 = [];
 
@@ -14082,14 +14256,14 @@ var app = (function () {
     		each_blocks_3[i] = create_each_block_4(get_each_context_4(ctx, each_value_4, i));
     	}
 
-    	function select_block_type(ctx, dirty) {
-    		if (/*filteredStudents*/ ctx[3].length > 0) return create_if_block_5;
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*selectedStudents*/ ctx[7].length > 0) return create_if_block_5;
     		return create_else_block_2;
     	}
 
-    	let current_block_type = select_block_type(ctx);
-    	let if_block0 = current_block_type(ctx);
-    	let each_value_3 = /*filteredStudents*/ ctx[3];
+    	let current_block_type_1 = select_block_type_1(ctx);
+    	let if_block1 = current_block_type_1(ctx);
+    	let each_value_3 = /*selectedStudents*/ ctx[7];
     	validate_each_argument(each_value_3);
     	let each_blocks_2 = [];
 
@@ -14097,13 +14271,17 @@ var app = (function () {
     		each_blocks_2[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
     	}
 
-    	function select_block_type_1(ctx, dirty) {
+    	const out = i => transition_out(each_blocks_2[i], 1, 1, () => {
+    		each_blocks_2[i] = null;
+    	});
+
+    	function select_block_type_2(ctx, dirty) {
     		if (/*selectedStudents*/ ctx[7].length > 0) return create_if_block_4;
     		return create_else_block_1;
     	}
 
-    	let current_block_type_1 = select_block_type_1(ctx);
-    	let if_block1 = current_block_type_1(ctx);
+    	let current_block_type_2 = select_block_type_2(ctx);
+    	let if_block2 = current_block_type_2(ctx);
     	let each_value_2 = /*selectedStudents*/ ctx[7];
     	validate_each_argument(each_value_2);
     	let each_blocks_1 = [];
@@ -14112,17 +14290,17 @@ var app = (function () {
     		each_blocks_1[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
     	}
 
-    	const out = i => transition_out(each_blocks_1[i], 1, 1, () => {
+    	const out_1 = i => transition_out(each_blocks_1[i], 1, 1, () => {
     		each_blocks_1[i] = null;
     	});
 
-    	function select_block_type_2(ctx, dirty) {
+    	function select_block_type_3(ctx, dirty) {
     		if (!/*response*/ ctx[2].level) return create_if_block_3;
     		return create_else_block;
     	}
 
-    	let current_block_type_2 = select_block_type_2(ctx);
-    	let if_block2 = current_block_type_2(ctx);
+    	let current_block_type_3 = select_block_type_3(ctx);
+    	let if_block3 = current_block_type_3(ctx);
     	let each_value_1 = behaviorCategories;
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
@@ -14131,12 +14309,12 @@ var app = (function () {
     		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
     	}
 
-    	let if_block3 = /*behaviorKinds*/ ctx[5].length < 1 && create_if_block_2(ctx);
-    	let if_block4 = /*behaviorKinds*/ ctx[5].length > 0 && create_if_block(ctx);
+    	let if_block4 = /*behaviorKinds*/ ctx[5].length < 1 && create_if_block_2(ctx);
+    	let if_block5 = /*behaviorKinds*/ ctx[5].length > 0 && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
-    			div14 = element("div");
+    			div17 = element("div");
     			p0 = element("p");
     			p0.textContent = "This form contains mock data";
     			t1 = space();
@@ -14164,8 +14342,8 @@ var app = (function () {
     			option1 = element("option");
     			option1.textContent = "All homerooms";
 
-    			for (let i = 0; i < each_blocks_3.length; i += 1) {
-    				each_blocks_3[i].c();
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].c();
     			}
 
     			t13 = space();
@@ -14176,7 +14354,7 @@ var app = (function () {
     			div4 = element("div");
     			div3 = element("div");
     			legend2 = element("legend");
-    			legend2.textContent = "Available Students";
+    			legend2.textContent = "Add Students";
     			t17 = space();
     			button0 = element("button");
     			button0.textContent = "Add Student";
@@ -14185,15 +14363,15 @@ var app = (function () {
     			t20 = space();
     			select1 = element("select");
 
-    			for (let i = 0; i < each_blocks_2.length; i += 1) {
-    				each_blocks_2[i].c();
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].c();
     			}
 
     			t21 = space();
     			div6 = element("div");
     			div5 = element("div");
     			legend3 = element("legend");
-    			legend3.textContent = "Selected Students";
+    			legend3.textContent = "Remove Students";
     			t23 = space();
     			button1 = element("button");
     			button1.textContent = "Remove Student";
@@ -14203,168 +14381,194 @@ var app = (function () {
     			t26 = space();
     			select2 = element("select");
 
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].c();
+    			}
+
+    			t27 = space();
+    			div10 = element("div");
+    			div9 = element("div");
+    			p4 = element("p");
+    			p4.textContent = "Currently Selected";
+    			t29 = space();
+    			p5 = element("p");
+    			if_block2.c();
+    			t30 = space();
+    			div8 = element("div");
+
     			for (let i = 0; i < each_blocks_1.length; i += 1) {
     				each_blocks_1[i].c();
     			}
 
-    			t27 = space();
-    			p4 = element("p");
-    			p4.textContent = "Next, select the Merit Category and then the Merit Type.";
-    			t29 = space();
-    			div10 = element("div");
-    			div8 = element("div");
+    			t31 = space();
+    			p6 = element("p");
+    			p6.textContent = "Next, select the Merit Category and then the Merit Type.";
+    			t33 = space();
+    			div13 = element("div");
+    			div11 = element("div");
     			legend4 = element("legend");
     			legend4.textContent = "Merit Categories";
-    			t31 = space();
-    			if_block2.c();
-    			t32 = space();
+    			t35 = space();
+    			if_block3.c();
+    			t36 = space();
     			fieldset0 = element("fieldset");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			t33 = space();
-    			div9 = element("div");
+    			t37 = space();
+    			div12 = element("div");
     			legend5 = element("legend");
     			legend5.textContent = "Merit Information";
-    			t35 = space();
-    			fieldset1 = element("fieldset");
-    			if (if_block3) if_block3.c();
-    			t36 = space();
-    			if (if_block4) if_block4.c();
-    			t37 = space();
-    			p5 = element("p");
-    			p5.textContent = "Finally, write a description of the incident and submit.";
     			t39 = space();
-    			div13 = element("div");
-    			div11 = element("div");
+    			fieldset1 = element("fieldset");
+    			if (if_block4) if_block4.c();
+    			t40 = space();
+    			if (if_block5) if_block5.c();
+    			t41 = space();
+    			p7 = element("p");
+    			p7.textContent = "Finally, write a description of the incident and submit.";
+    			t43 = space();
+    			div16 = element("div");
+    			div14 = element("div");
     			label = element("label");
     			label.textContent = "Details";
-    			t41 = space();
+    			t45 = space();
     			textarea = element("textarea");
-    			t42 = space();
-    			div12 = element("div");
+    			t46 = space();
+    			div15 = element("div");
     			button2 = element("button");
     			button2.textContent = "Submit";
-    			add_location(p0, file$3, 146, 2, 4742);
+    			add_location(p0, file$3, 147, 2, 4748);
     			attr_dev(h1, "class", "text-2xl text-blue-800 mx-2");
-    			add_location(h1, file$3, 147, 2, 4780);
+    			add_location(h1, file$3, 148, 2, 4786);
     			attr_dev(p1, "class", "text-blue-800 text-m px-4 italic");
-    			add_location(p1, file$3, 149, 4, 4897);
+    			add_location(p1, file$3, 150, 4, 4903);
     			attr_dev(legend0, "class", "text-xl text-blue-800");
-    			add_location(legend0, file$3, 157, 8, 5209);
+    			add_location(legend0, file$3, 157, 8, 5214);
     			attr_dev(input, "class", "mt-1 w-full mr-6 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "search-field");
     			attr_dev(input, "placeholder", "Enter Student Name");
     			attr_dev(input, "autocomplete", "off");
-    			add_location(input, file$3, 158, 8, 5282);
+    			add_location(input, file$3, 158, 8, 5287);
     			attr_dev(div0, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
-    			add_location(div0, file$3, 156, 6, 5153);
+    			add_location(div0, file$3, 156, 6, 5158);
     			attr_dev(legend1, "class", "text-xl text-blue-800");
-    			add_location(legend1, file$3, 169, 8, 5718);
+    			add_location(legend1, file$3, 169, 8, 5723);
     			option0.disabled = true;
     			option0.selected = true;
     			option0.__value = "";
     			option0.value = option0.__value;
-    			add_location(option0, file$3, 176, 10, 6057);
+    			add_location(option0, file$3, 176, 10, 6062);
     			option1.__value = "All Homerooms";
     			option1.value = option1.__value;
-    			add_location(option1, file$3, 177, 10, 6130);
+    			add_location(option1, file$3, 177, 10, 6135);
     			attr_dev(select0, "class", "mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select0, "name", "homeroom");
     			attr_dev(select0, "id", "homeroom");
     			if (/*selectedHomeroom*/ ctx[1] === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[16].call(select0));
-    			add_location(select0, file$3, 170, 8, 5793);
+    			add_location(select0, file$3, 170, 8, 5798);
     			attr_dev(div1, "class", "p-4 m-2 shadow-lg w-96 rounded-lg");
-    			add_location(div1, file$3, 168, 6, 5662);
+    			add_location(div1, file$3, 168, 6, 5667);
     			attr_dev(div2, "class", "flex justify-center flex-wrap");
-    			add_location(div2, file$3, 153, 4, 5065);
+    			add_location(div2, file$3, 154, 4, 5071);
     			attr_dev(p2, "class", "text-blue-800 text-m px-4 italic");
-    			add_location(p2, file$3, 184, 4, 6344);
+    			add_location(p2, file$3, 184, 4, 6349);
     			attr_dev(legend2, "class", "text-xl text-blue-800");
-    			add_location(legend2, file$3, 190, 10, 6634);
+    			add_location(legend2, file$3, 190, 10, 6637);
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "class", "inline-block mb-2 px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button0, file$3, 191, 10, 6710);
+    			add_location(button0, file$3, 191, 10, 6707);
     			attr_dev(div3, "class", "flex justify-between");
-    			add_location(div3, file$3, 189, 8, 6589);
+    			add_location(div3, file$3, 189, 8, 6592);
     			attr_dev(select1, "class", "mt-1 rounded-md h-32 w-full border-1 border-blue-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select1, "name", "students");
     			attr_dev(select1, "id", "students");
     			select1.multiple = true;
     			if (/*studentsToAddToList*/ ctx[8] === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[17].call(select1));
-    			add_location(select1, file$3, 207, 8, 7494);
+    			add_location(select1, file$3, 207, 8, 7491);
     			attr_dev(div4, "class", "p-4 m-2 shadow-lg w-96 rounded-lg");
-    			add_location(div4, file$3, 188, 6, 6531);
+    			add_location(div4, file$3, 188, 6, 6536);
     			attr_dev(legend3, "class", "text-xl text-blue-800");
-    			add_location(legend3, file$3, 222, 10, 8156);
+    			add_location(legend3, file$3, 223, 10, 8154);
     			attr_dev(button1, "type", "button");
     			attr_dev(button1, "class", "inline-block mb-2 px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button1, file$3, 223, 10, 8231);
+    			add_location(button1, file$3, 224, 10, 8227);
     			attr_dev(div5, "class", "flex justify-between");
-    			add_location(div5, file$3, 221, 8, 8111);
+    			add_location(div5, file$3, 222, 8, 8109);
     			attr_dev(p3, "class", "text-red-500 text-xs italic");
-    			add_location(p3, file$3, 230, 8, 8688);
+    			add_location(p3, file$3, 231, 8, 8684);
     			attr_dev(select2, "class", "mt-1 rounded-md h-32 w-full border-1 border-blue-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50");
     			attr_dev(select2, "name", "addedStudents");
     			attr_dev(select2, "id", "addedStudents");
     			select2.multiple = true;
     			if (/*studentsToRemoveFromList*/ ctx[9] === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[18].call(select2));
-    			add_location(select2, file$3, 237, 8, 8925);
+    			add_location(select2, file$3, 238, 8, 8903);
     			attr_dev(div6, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
-    			add_location(div6, file$3, 220, 6, 8055);
+    			add_location(div6, file$3, 221, 6, 8053);
     			attr_dev(div7, "class", "flex justify-center flex-wrap");
-    			add_location(div7, file$3, 187, 4, 6481);
-    			attr_dev(p4, "class", "text-blue-800 text-m px-4 italic");
-    			add_location(p4, file$3, 254, 4, 9540);
+    			add_location(div7, file$3, 187, 4, 6486);
+    			attr_dev(p4, "class", "text-xl mb-4 text-blue-800 text-center");
+    			add_location(p4, file$3, 258, 8, 9671);
+    			attr_dev(p5, "class", "text-red-500 text-xs italic");
+    			add_location(p5, file$3, 259, 8, 9753);
+    			attr_dev(div8, "class", "flex flex-wrap mt-1 w-full border-1 rounded border-blue-600");
+    			toggle_class(div8, "border", /*selectedStudents*/ ctx[7].length > 0);
+    			add_location(div8, file$3, 266, 8, 9975);
+    			attr_dev(div9, "class", "p-4 m-2 shadow-lg w-full rounded-lg");
+    			add_location(div9, file$3, 257, 6, 9613);
+    			attr_dev(div10, "class", "flex flex-wrap justify-center");
+    			add_location(div10, file$3, 256, 4, 9563);
+    			attr_dev(p6, "class", "text-blue-800 text-m px-4 italic");
+    			add_location(p6, file$3, 283, 4, 10524);
     			attr_dev(legend4, "class", "text-xl text-blue-800");
-    			add_location(legend4, file$3, 259, 8, 9767);
-    			add_location(fieldset0, file$3, 269, 8, 10185);
-    			attr_dev(div8, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
-    			add_location(div8, file$3, 258, 6, 9711);
+    			add_location(legend4, file$3, 288, 8, 10751);
+    			add_location(fieldset0, file$3, 298, 8, 11169);
+    			attr_dev(div11, "class", "p-4 m-2 w-96 shadow-lg rounded-lg");
+    			add_location(div11, file$3, 287, 6, 10695);
     			attr_dev(legend5, "class", "text-xl text-blue-800");
-    			add_location(legend5, file$3, 287, 8, 10770);
-    			add_location(fieldset1, file$3, 288, 8, 10843);
-    			attr_dev(div9, "class", "p-4 m-2 w-96 shadow-lg");
-    			add_location(div9, file$3, 286, 6, 10725);
-    			attr_dev(div10, "class", "flex justify-center flex-wrap");
-    			add_location(div10, file$3, 257, 4, 9661);
-    			attr_dev(p5, "class", "text-blue-800 text-m px-4 italic");
-    			add_location(p5, file$3, 347, 4, 13217);
+    			add_location(legend5, file$3, 316, 8, 11754);
+    			add_location(fieldset1, file$3, 317, 8, 11827);
+    			attr_dev(div12, "class", "p-4 m-2 w-96 shadow-lg");
+    			add_location(div12, file$3, 315, 6, 11709);
+    			attr_dev(div13, "class", "flex justify-center flex-wrap");
+    			add_location(div13, file$3, 286, 4, 10645);
+    			attr_dev(p7, "class", "text-blue-800 text-m px-4 italic");
+    			add_location(p7, file$3, 376, 4, 14201);
     			attr_dev(label, "for", "details");
     			attr_dev(label, "class", "block text-xl text-blue-800");
-    			add_location(label, file$3, 352, 8, 13433);
+    			add_location(label, file$3, 381, 8, 14417);
     			attr_dev(textarea, "class", "form-textarea mt-1 w-full block h-24 border-1 rounded border-blue-600");
     			attr_dev(textarea, "name", "details");
     			attr_dev(textarea, "rows", "3");
     			attr_dev(textarea, "placeholder", "Describe the issue.");
     			textarea.required = true;
-    			add_location(textarea, file$3, 353, 8, 13514);
-    			attr_dev(div11, "class", "p-4 m-2 w-96 shadow-lg");
-    			add_location(div11, file$3, 351, 6, 13388);
+    			add_location(textarea, file$3, 382, 8, 14498);
+    			attr_dev(div14, "class", "p-4 m-2 w-96 shadow-lg");
+    			add_location(div14, file$3, 380, 6, 14372);
     			attr_dev(button2, "type", "submit");
     			attr_dev(button2, "class", "inline-block px-4 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button2, file$3, 363, 8, 13861);
-    			attr_dev(div12, "class", "p-4 m-2 w-96 shadow-lg grid place-content-center");
-    			add_location(div12, file$3, 362, 6, 13789);
-    			attr_dev(div13, "class", "flex justify-center flex-wrap");
-    			add_location(div13, file$3, 350, 4, 13338);
-    			add_location(form, file$3, 148, 2, 4846);
-    			attr_dev(div14, "class", "m-2");
-    			add_location(div14, file$3, 145, 0, 4722);
+    			add_location(button2, file$3, 392, 8, 14845);
+    			attr_dev(div15, "class", "p-4 m-2 w-96 shadow-lg grid place-content-center");
+    			add_location(div15, file$3, 391, 6, 14773);
+    			attr_dev(div16, "class", "flex justify-center flex-wrap");
+    			add_location(div16, file$3, 379, 4, 14322);
+    			add_location(form, file$3, 149, 2, 4852);
+    			attr_dev(div17, "class", "m-2");
+    			add_location(div17, file$3, 146, 0, 4728);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div14, anchor);
-    			append_dev(div14, p0);
-    			append_dev(div14, t1);
-    			append_dev(div14, h1);
-    			append_dev(div14, t3);
-    			append_dev(div14, form);
+    			insert_dev(target, div17, anchor);
+    			append_dev(div17, p0);
+    			append_dev(div17, t1);
+    			append_dev(div17, h1);
+    			append_dev(div17, t3);
+    			append_dev(div17, form);
     			append_dev(form, p1);
     			append_dev(form, t5);
     			append_dev(form, div2);
@@ -14381,8 +14585,8 @@ var app = (function () {
     			append_dev(select0, option0);
     			append_dev(select0, option1);
 
-    			for (let i = 0; i < each_blocks_3.length; i += 1) {
-    				each_blocks_3[i].m(select0, null);
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].m(select0, null);
     			}
 
     			select_option(select0, /*selectedHomeroom*/ ctx[1]);
@@ -14400,8 +14604,8 @@ var app = (function () {
     			append_dev(div4, t20);
     			append_dev(div4, select1);
 
-    			for (let i = 0; i < each_blocks_2.length; i += 1) {
-    				each_blocks_2[i].m(select1, null);
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].m(select1, null);
     			}
 
     			select_options(select1, /*studentsToAddToList*/ ctx[8]);
@@ -14417,46 +14621,60 @@ var app = (function () {
     			append_dev(div6, t26);
     			append_dev(div6, select2);
 
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].m(select2, null);
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].m(select2, null);
     			}
 
     			select_options(select2, /*studentsToRemoveFromList*/ ctx[9]);
     			append_dev(form, t27);
-    			append_dev(form, p4);
-    			append_dev(form, t29);
     			append_dev(form, div10);
-    			append_dev(div10, div8);
-    			append_dev(div8, legend4);
-    			append_dev(div8, t31);
-    			if_block2.m(div8, null);
-    			append_dev(div8, t32);
-    			append_dev(div8, fieldset0);
+    			append_dev(div10, div9);
+    			append_dev(div9, p4);
+    			append_dev(div9, t29);
+    			append_dev(div9, p5);
+    			if_block2.m(p5, null);
+    			append_dev(div9, t30);
+    			append_dev(div9, div8);
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].m(div8, null);
+    			}
+
+    			append_dev(form, t31);
+    			append_dev(form, p6);
+    			append_dev(form, t33);
+    			append_dev(form, div13);
+    			append_dev(div13, div11);
+    			append_dev(div11, legend4);
+    			append_dev(div11, t35);
+    			if_block3.m(div11, null);
+    			append_dev(div11, t36);
+    			append_dev(div11, fieldset0);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(fieldset0, null);
     			}
 
-    			append_dev(div10, t33);
-    			append_dev(div10, div9);
-    			append_dev(div9, legend5);
-    			append_dev(div9, t35);
-    			append_dev(div9, fieldset1);
-    			if (if_block3) if_block3.m(fieldset1, null);
-    			append_dev(fieldset1, t36);
-    			if (if_block4) if_block4.m(fieldset1, null);
-    			append_dev(form, t37);
-    			append_dev(form, p5);
-    			append_dev(form, t39);
-    			append_dev(form, div13);
-    			append_dev(div13, div11);
-    			append_dev(div11, label);
-    			append_dev(div11, t41);
-    			append_dev(div11, textarea);
-    			set_input_value(textarea, /*response*/ ctx[2].details);
-    			append_dev(div13, t42);
+    			append_dev(div13, t37);
     			append_dev(div13, div12);
-    			append_dev(div12, button2);
+    			append_dev(div12, legend5);
+    			append_dev(div12, t39);
+    			append_dev(div12, fieldset1);
+    			if (if_block4) if_block4.m(fieldset1, null);
+    			append_dev(fieldset1, t40);
+    			if (if_block5) if_block5.m(fieldset1, null);
+    			append_dev(form, t41);
+    			append_dev(form, p7);
+    			append_dev(form, t43);
+    			append_dev(form, div16);
+    			append_dev(div16, div14);
+    			append_dev(div14, label);
+    			append_dev(div14, t45);
+    			append_dev(div14, textarea);
+    			set_input_value(textarea, /*response*/ ctx[2].details);
+    			append_dev(div16, t46);
+    			append_dev(div16, div15);
+    			append_dev(div15, button2);
     			current = true;
 
     			if (!mounted) {
@@ -14481,27 +14699,27 @@ var app = (function () {
     			}
 
     			if (dirty[0] & /*homerooms*/ 16) {
-    				each_value_4 = /*homerooms*/ ctx[4];
-    				validate_each_argument(each_value_4);
+    				each_value_5 = /*homerooms*/ ctx[4];
+    				validate_each_argument(each_value_5);
     				let i;
 
-    				for (i = 0; i < each_value_4.length; i += 1) {
-    					const child_ctx = get_each_context_4(ctx, each_value_4, i);
+    				for (i = 0; i < each_value_5.length; i += 1) {
+    					const child_ctx = get_each_context_5(ctx, each_value_5, i);
 
-    					if (each_blocks_3[i]) {
-    						each_blocks_3[i].p(child_ctx, dirty);
+    					if (each_blocks_4[i]) {
+    						each_blocks_4[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks_3[i] = create_each_block_4(child_ctx);
-    						each_blocks_3[i].c();
-    						each_blocks_3[i].m(select0, null);
+    						each_blocks_4[i] = create_each_block_5(child_ctx);
+    						each_blocks_4[i].c();
+    						each_blocks_4[i].m(select0, null);
     					}
     				}
 
-    				for (; i < each_blocks_3.length; i += 1) {
-    					each_blocks_3[i].d(1);
+    				for (; i < each_blocks_4.length; i += 1) {
+    					each_blocks_4[i].d(1);
     				}
 
-    				each_blocks_3.length = each_value_4.length;
+    				each_blocks_4.length = each_value_5.length;
     			}
 
     			if (dirty[0] & /*selectedHomeroom, homerooms*/ 18) {
@@ -14520,29 +14738,29 @@ var app = (function () {
     			}
 
     			if (dirty[0] & /*filteredStudents*/ 8) {
-    				each_value_3 = /*filteredStudents*/ ctx[3];
-    				validate_each_argument(each_value_3);
+    				each_value_4 = /*filteredStudents*/ ctx[3];
+    				validate_each_argument(each_value_4);
     				let i;
 
-    				for (i = 0; i < each_value_3.length; i += 1) {
-    					const child_ctx = get_each_context_3(ctx, each_value_3, i);
+    				for (i = 0; i < each_value_4.length; i += 1) {
+    					const child_ctx = get_each_context_4(ctx, each_value_4, i);
 
-    					if (each_blocks_2[i]) {
-    						each_blocks_2[i].p(child_ctx, dirty);
-    						transition_in(each_blocks_2[i], 1);
+    					if (each_blocks_3[i]) {
+    						each_blocks_3[i].p(child_ctx, dirty);
+    						transition_in(each_blocks_3[i], 1);
     					} else {
-    						each_blocks_2[i] = create_each_block_3(child_ctx);
-    						each_blocks_2[i].c();
-    						transition_in(each_blocks_2[i], 1);
-    						each_blocks_2[i].m(select1, null);
+    						each_blocks_3[i] = create_each_block_4(child_ctx);
+    						each_blocks_3[i].c();
+    						transition_in(each_blocks_3[i], 1);
+    						each_blocks_3[i].m(select1, null);
     					}
     				}
 
-    				for (; i < each_blocks_2.length; i += 1) {
-    					each_blocks_2[i].d(1);
+    				for (; i < each_blocks_3.length; i += 1) {
+    					each_blocks_3[i].d(1);
     				}
 
-    				each_blocks_2.length = each_value_3.length;
+    				each_blocks_3.length = each_value_4.length;
     			}
 
     			if (dirty[0] & /*studentsToAddToList, filteredStudents*/ 264) {
@@ -14556,6 +14774,48 @@ var app = (function () {
     				if (if_block1) {
     					if_block1.c();
     					if_block1.m(p3, null);
+    				}
+    			}
+
+    			if (dirty[0] & /*selectedStudents*/ 128) {
+    				each_value_3 = /*selectedStudents*/ ctx[7];
+    				validate_each_argument(each_value_3);
+    				let i;
+
+    				for (i = 0; i < each_value_3.length; i += 1) {
+    					const child_ctx = get_each_context_3(ctx, each_value_3, i);
+
+    					if (each_blocks_2[i]) {
+    						each_blocks_2[i].p(child_ctx, dirty);
+    						transition_in(each_blocks_2[i], 1);
+    					} else {
+    						each_blocks_2[i] = create_each_block_3(child_ctx);
+    						each_blocks_2[i].c();
+    						transition_in(each_blocks_2[i], 1);
+    						each_blocks_2[i].m(select2, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value_3.length; i < each_blocks_2.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+
+    			if (dirty[0] & /*studentsToRemoveFromList, selectedStudents*/ 640) {
+    				select_options(select2, /*studentsToRemoveFromList*/ ctx[9]);
+    			}
+
+    			if (current_block_type_2 !== (current_block_type_2 = select_block_type_2(ctx))) {
+    				if_block2.d(1);
+    				if_block2 = current_block_type_2(ctx);
+
+    				if (if_block2) {
+    					if_block2.c();
+    					if_block2.m(p5, null);
     				}
     			}
 
@@ -14574,31 +14834,31 @@ var app = (function () {
     						each_blocks_1[i] = create_each_block_2(child_ctx);
     						each_blocks_1[i].c();
     						transition_in(each_blocks_1[i], 1);
-    						each_blocks_1[i].m(select2, null);
+    						each_blocks_1[i].m(div8, null);
     					}
     				}
 
     				group_outros();
 
     				for (i = each_value_2.length; i < each_blocks_1.length; i += 1) {
-    					out(i);
+    					out_1(i);
     				}
 
     				check_outros();
     			}
 
-    			if (dirty[0] & /*studentsToRemoveFromList, selectedStudents*/ 640) {
-    				select_options(select2, /*studentsToRemoveFromList*/ ctx[9]);
+    			if (dirty[0] & /*selectedStudents*/ 128) {
+    				toggle_class(div8, "border", /*selectedStudents*/ ctx[7].length > 0);
     			}
 
-    			if (current_block_type_2 !== (current_block_type_2 = select_block_type_2(ctx))) {
-    				if_block2.d(1);
-    				if_block2 = current_block_type_2(ctx);
+    			if (current_block_type_3 !== (current_block_type_3 = select_block_type_3(ctx))) {
+    				if_block3.d(1);
+    				if_block3 = current_block_type_3(ctx);
 
-    				if (if_block2) {
-    					if_block2.c();
-    					transition_in(if_block2, 1);
-    					if_block2.m(div8, t32);
+    				if (if_block3) {
+    					if_block3.c();
+    					transition_in(if_block3, 1);
+    					if_block3.m(div11, t36);
     				}
     			}
 
@@ -14629,34 +14889,34 @@ var app = (function () {
     			}
 
     			if (/*behaviorKinds*/ ctx[5].length < 1) {
-    				if (if_block3) ; else {
-    					if_block3 = create_if_block_2(ctx);
-    					if_block3.c();
-    					if_block3.m(fieldset1, t36);
+    				if (if_block4) ; else {
+    					if_block4 = create_if_block_2(ctx);
+    					if_block4.c();
+    					if_block4.m(fieldset1, t40);
     				}
-    			} else if (if_block3) {
-    				if_block3.d(1);
-    				if_block3 = null;
+    			} else if (if_block4) {
+    				if_block4.d(1);
+    				if_block4 = null;
     			}
 
     			if (/*behaviorKinds*/ ctx[5].length > 0) {
-    				if (if_block4) {
-    					if_block4.p(ctx, dirty);
+    				if (if_block5) {
+    					if_block5.p(ctx, dirty);
 
     					if (dirty[0] & /*behaviorKinds*/ 32) {
-    						transition_in(if_block4, 1);
+    						transition_in(if_block5, 1);
     					}
     				} else {
-    					if_block4 = create_if_block(ctx);
-    					if_block4.c();
-    					transition_in(if_block4, 1);
-    					if_block4.m(fieldset1, null);
+    					if_block5 = create_if_block(ctx);
+    					if_block5.c();
+    					transition_in(if_block5, 1);
+    					if_block5.m(fieldset1, null);
     				}
-    			} else if (if_block4) {
+    			} else if (if_block5) {
     				group_outros();
 
-    				transition_out(if_block4, 1, 1, () => {
-    					if_block4 = null;
+    				transition_out(if_block5, 1, 1, () => {
+    					if_block5 = null;
     				});
 
     				check_outros();
@@ -14670,6 +14930,10 @@ var app = (function () {
     			if (current) return;
     			transition_in(if_block0);
 
+    			for (let i = 0; i < each_value_4.length; i += 1) {
+    				transition_in(each_blocks_3[i]);
+    			}
+
     			for (let i = 0; i < each_value_3.length; i += 1) {
     				transition_in(each_blocks_2[i]);
     			}
@@ -14678,36 +14942,44 @@ var app = (function () {
     				transition_in(each_blocks_1[i]);
     			}
 
-    			transition_in(if_block2);
+    			transition_in(if_block3);
 
     			for (let i = 0; i < each_value_1.length; i += 1) {
     				transition_in(each_blocks[i]);
     			}
 
-    			transition_in(if_block4);
+    			transition_in(if_block5);
     			current = true;
     		},
     		o: function outro(local) {
+    			each_blocks_2 = each_blocks_2.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				transition_out(each_blocks_2[i]);
+    			}
+
     			each_blocks_1 = each_blocks_1.filter(Boolean);
 
     			for (let i = 0; i < each_blocks_1.length; i += 1) {
     				transition_out(each_blocks_1[i]);
     			}
 
-    			transition_out(if_block4);
+    			transition_out(if_block5);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div14);
-    			destroy_each(each_blocks_3, detaching);
+    			if (detaching) detach_dev(div17);
+    			destroy_each(each_blocks_4, detaching);
     			if_block0.d();
-    			destroy_each(each_blocks_2, detaching);
+    			destroy_each(each_blocks_3, detaching);
     			if_block1.d();
-    			destroy_each(each_blocks_1, detaching);
+    			destroy_each(each_blocks_2, detaching);
     			if_block2.d();
+    			destroy_each(each_blocks_1, detaching);
+    			if_block3.d();
     			destroy_each(each_blocks, detaching);
-    			if (if_block3) if_block3.d();
     			if (if_block4) if_block4.d();
+    			if (if_block5) if_block5.d();
     			mounted = false;
     			run_all(dispose);
     		}
@@ -14952,6 +15224,7 @@ var app = (function () {
     		onMount,
     		slide,
     		fade,
+    		fly,
     		response,
     		searchTerm,
     		filteredStudents,
